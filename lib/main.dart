@@ -70,9 +70,9 @@ class MyHomePage extends StatelessWidget {
 
 class SignInForm extends StatelessWidget {
   SignInForm({Key key}) : super(key: key);
-  AuthService _authService = new AuthService();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final AuthService _authService = new AuthService();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
