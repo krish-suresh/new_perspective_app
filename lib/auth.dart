@@ -46,4 +46,15 @@ class AuthService {
   void signOut() {
     _auth.signOut();
   }
+
+  Future<User> handleSignUp(email, password) async {
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    User user = userCredential.user;
+
+    assert(user != null);
+    assert(await user.getIdToken() != null);
+
+    return user;
+  }
 }

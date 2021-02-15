@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           theme: ThemeData(
             primarySwatch: Colors.blue,
+            backgroundColor: Colors.white,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           home: MyHomePage()),
@@ -37,23 +38,65 @@ class MyHomePage extends StatelessWidget {
     User user = context.watch<User>();
     AuthService _authService = new AuthService();
 
-    return Container(
-      child: user != null
-          ? Column(
-              children: [
-                Text(user.displayName),
-                RaisedButton(
-                  onPressed: () => _authService.signOut(),
-                  child: Text('Sign Out'),
-                )
-              ],
-            )
-          : Center(
-              child: RaisedButton(
-                onPressed: () => _authService.googleSignIn(),
-                child: Text('Signin with Google'),
+    return Scaffold(
+      body: Container(
+        child: user != null
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(user.displayName),
+                  RaisedButton(
+                    onPressed: () => _authService.signOut(),
+                    child: Text('Sign Out'),
+                  )
+                ],
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SignInForm(),
+                    RaisedButton(
+                      onPressed: () => _authService.googleSignIn(),
+                      child: Text('Signin with Google'),
+                    ),
+                  ],
+                ),
               ),
+      ),
+    );
+  }
+}
+
+class SignInForm extends StatelessWidget {
+  SignInForm({Key key}) : super(key: key);
+  AuthService _authService = new AuthService();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(15),
+            child: TextField(
+              controller: emailController,
             ),
+          ),
+          Container(
+            padding: EdgeInsets.all(15),
+            child: TextField(
+              controller: passwordController,
+            ),
+          ),
+          RaisedButton(
+            onPressed: () => _authService.signIn(
+                email: emailController.text, password: passwordController.text),
+            child: Text('Sign in'),
+          )
+        ],
+      ),
     );
   }
 }
