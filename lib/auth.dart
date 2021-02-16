@@ -47,7 +47,8 @@ class AuthService {
     _auth.signOut();
   }
 
-  Future<User> handleSignUp(email, password) async {
+  Future<User> handleSignUp({String email, String password}) async {
+    print("User Started");
     UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
     User user = userCredential.user;
