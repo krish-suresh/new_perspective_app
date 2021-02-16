@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "527603240865",
+    "firebase_url": "https://new-perspective-app-default-rtdb.firebaseio.com",
+    "project_id": "new-perspective-app",
+    "storage_bucket": "new-perspective-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527603240865:android:5a7165e8c3fe8748fe85e0",
+        "android_client_info": {
+          "package_name": "org.flutter.newperspective"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527603240865-o6hctcvetdh0pr25s96dj2ijat5c69pv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.flutter.newperspective",
+            "certificate_hash": "8150d95488a27d4630c93264fae0e42d7b5bb8ae"
+          }
+        },
+        {
+          "client_id": "527603240865-tpdm80tr6k38312bbtt31h4bkge3hja6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMey4uMXJoNFmyE6DHZBZ6_fOv6Y_fc80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527603240865-tpdm80tr6k38312bbtt31h4bkge3hja6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
