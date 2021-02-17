@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:newPerspectiveApp/auth.dart';
+import 'package:newPerspectiveApp/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider<User>.value(
-            value: FirebaseAuth.instance.authStateChanges()),
+          value: FirebaseAuth.instance.authStateChanges(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -181,15 +183,32 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     User user = context.watch<User>();
     AuthService _authService = new AuthService();
+    CollectionReference chats = FirebaseFirestore.instance.collection('chats');
 
     return Container(
         child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            user.toString(),
-            style: Theme.of(context).textTheme.headline1,
+          FutureBuilder<DocumentSnapshot>(
+            future: chats.doc('YeuRc4NmQ8NPY9QsJ95T').get(),
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return Text("Something went wrong");
+              }
+
+              if (snapshot.connectionState == ConnectionState.done) {
+                Map<String, dynamic> data = snapshot.data.data();
+                return Text(
+                  data.toString(),
+                  style: Theme.of(context).textTheme.headline1,
+                );
+              }
+
+              return Text("loading",
+                  style: Theme.of(context).textTheme.headline1);
+            },
           ),
           RaisedButton(
             onPressed: () => _authService.signOut(),
