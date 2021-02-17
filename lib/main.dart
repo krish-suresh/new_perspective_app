@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:newPerspectiveApp/services/auth.dart';
+import 'package:newPerspectiveApp/services/db.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'interfaces.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -184,24 +187,24 @@ class HomePage extends StatelessWidget {
     User user = context.watch<User>();
     AuthService _authService = new AuthService();
     CollectionReference chats = FirebaseFirestore.instance.collection('chats');
-
+    DBService _db = DBService();
     return Container(
         child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          FutureBuilder<DocumentSnapshot>(
-            future: chats.doc('YeuRc4NmQ8NPY9QsJ95T').get(),
-            builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot) {
+          FutureBuilder<Chat>(
+            future: _db.getChat('YeuRc4NmQ8NPY9QsJ95T'),
+            builder: (BuildContext context, AsyncSnapshot<Chat> snapshot) {
+              print("SNAPSHOT: " + snapshot.toString());
               if (snapshot.hasError) {
                 return Text("Something went wrong");
               }
 
               if (snapshot.connectionState == ConnectionState.done) {
-                Map<String, dynamic> data = snapshot.data.data();
+                Chat chat = snapshot.data;
                 return Text(
-                  data.toString(),
+                  chat.toString(),
                   style: Theme.of(context).textTheme.headline1,
                 );
               }
@@ -217,5 +220,60 @@ class HomePage extends StatelessWidget {
         ],
       ),
     ));
+  }
+}
+
+class ChatWidget extends StatelessWidget {
+  final Chat chat;
+  const ChatWidget({this.chat, Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [StreamProvider.value(value: chat.getMessageStream())],
+      child: Container(
+        child: MessageList(),
+      ),
+    );
+  }
+}
+
+class MessageList extends StatelessWidget {
+  const MessageList({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Message> messages = context.watch<List<Message>>();
+    return messages != null
+        ? Container(
+            child: ListView.builder(
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: MessageWidget(message: messages[index]),
+                );
+              },
+            ),
+          )
+        : Text('Messages Loading');
+  }
+}
+
+class MessageWidget extends StatelessWidget {
+  final Message message;
+  const MessageWidget({this.message, Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Widget contentWidget = Text("");
+    switch (message.contentType) {
+      case "text":
+        contentWidget = Text(message.content);
+        break;
+      default:
+    }
+    return Container(
+      child: contentWidget,
+    );
   }
 }
