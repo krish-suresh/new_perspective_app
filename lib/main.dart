@@ -186,67 +186,91 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     User user = context.watch<User>();
     AuthService _authService = new AuthService();
-    CollectionReference chats = FirebaseFirestore.instance.collection('chats');
     DBService _db = DBService();
-    return Container(
-        child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FutureBuilder<Chat>(
-            future: _db.getChat('YeuRc4NmQ8NPY9QsJ95T'),
-            builder: (BuildContext context, AsyncSnapshot<Chat> snapshot) {
-              print("SNAPSHOT: " + snapshot.toString());
-              if (snapshot.hasError) {
-                return Text("Something went wrong");
-              }
+    return Material(
+      child: Container(
+          child: Center(
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 100,
+            ),
+            Text(user.email),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('chats')
+                  .doc('YeuRc4NmQ8NPY9QsJ95T')
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong');
+                }
 
-              if (snapshot.connectionState == ConnectionState.done) {
-                Chat chat = snapshot.data;
-                return Text(
-                  chat.toString(),
-                  style: Theme.of(context).textTheme.headline1,
-                );
-              }
-
-              return Text("loading",
-                  style: Theme.of(context).textTheme.headline1);
-            },
-          ),
-          RaisedButton(
-            onPressed: () => _authService.signOut(),
-            child: Text('Sign Out'),
-          )
-        ],
-      ),
-    ));
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Loading");
+                }
+                // return Text(snapshot.data['createdAt']);
+                return ChatWidget(
+                    chat: Chat.fromSnapshot(
+                        snapshot.data, 'YeuRc4NmQ8NPY9QsJ95T'));
+              },
+            ),
+            RaisedButton(
+              onPressed: () => _authService.signOut(),
+              child: Text('Sign Out'),
+            )
+          ],
+        ),
+      )),
+    );
   }
 }
 
 class ChatWidget extends StatelessWidget {
   final Chat chat;
-  const ChatWidget({this.chat, Key key}) : super(key: key);
+  ChatWidget({Key key, this.chat}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [StreamProvider.value(value: chat.getMessageStream())],
-      child: Container(
-        child: MessageList(),
+    // Chat chat = context.watch<Chat>();
+    TextEditingController messagingFieldController = TextEditingController();
+    User user = context.watch<User>();
+
+    return Container(
+      child: Column(
+        children: [
+          chat != null
+              ? MessageList(messages: chat.messages)
+              : Text('Loading Chat'),
+          TextField(
+            controller: messagingFieldController,
+          ),
+          RaisedButton(
+            child: Text("Send"),
+            onPressed: () => chat.sendMessage(
+                content: messagingFieldController.text,
+                contentType: 'text',
+                userID: user.uid),
+          )
+        ],
       ),
     );
   }
 }
 
 class MessageList extends StatelessWidget {
-  const MessageList({Key key}) : super(key: key);
+  final List<Message> messages;
+  const MessageList({Key key, this.messages}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Message> messages = context.watch<List<Message>>();
     return messages != null
         ? Container(
             child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 return ListTile(

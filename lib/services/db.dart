@@ -10,18 +10,11 @@ class DBService {
   // constructor
   DBService() {}
 
-  Future<List<Message>> getMessages(String messagesID) {}
-
-  Future<Chat> getChat(String chatID) async {
-    DocumentSnapshot snapshot = await _db.collection('chats').doc(chatID).get();
-    Map<String, dynamic> chatData = snapshot.data();
-    print("CHATDATETIME: " + chatData['users'].toString());
-
-    return Chat(
-        chatID: chatData[''],
-        userIDs: chatData['users'],
-        createdAt: chatData['createdAt'].toDate(),
-        // messagesID: chatData['messages']
-        );
+  Stream<Chat> getChatStream(chatID) {
+    return _db
+        .collection('chats')
+        .doc(chatID)
+        .snapshots()
+        .map((snapshot) => Chat.fromSnapshot(snapshot, chatID));
   }
 }
