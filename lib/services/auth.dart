@@ -19,6 +19,8 @@ class AuthService {
       idToken: googleAuth.idToken,
     );
     UserCredential userCreds = await _auth.signInWithCredential(credential);
+    updateUserData(userCreds.user);
+
     return userCreds.user;
   }
 
@@ -27,7 +29,20 @@ class AuthService {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       User user = userCredential.user;
-      if (!user.emailVerified) {
+      DocumentSnapshot userData =
+          await _db.collection('users').doc(user.uid).get();
+      updateUserData(user);
+
+      final now = DateTime.now();
+      if (!user.emailVerified &&
+          (!userData.data().containsKey('sentVerificationEmailDate') ||
+              userData
+                  .data()['sentVerificationEmailDate']
+                  .toDate()
+                  .isBefore(DateTime(now.year, now.month, now.day - 3)))) {
+        _db.collection('users').doc(user.uid).set({
+          'sentVerificationEmailDate': DateTime.now(),
+        }, SetOptions(merge: true));
         await user.sendEmailVerification();
       }
       return user;
@@ -41,13 +56,18 @@ class AuthService {
     return null;
   }
 
-  void updateUserData(User user) async {}
+  void updateUserData(User user) async {
+    print("Updating User: " + user.uid);
+    _db.collection('users').doc(user.uid).set(
+        {'uid': user.uid, 'lastSeen': DateTime.now()}, SetOptions(merge: true));
+  }
 
   void signOut() {
     _auth.signOut();
   }
 
-  Future<User> handleSignUp({String email, String password}) async {
+  Future<User> handleSignUp(
+      {String email, String password, String name}) async {
     print("User Started");
     UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
@@ -55,7 +75,12 @@ class AuthService {
 
     assert(user != null);
     assert(await user.getIdToken() != null);
-
+    await user.sendEmailVerification();
+    updateUserData(user);
+    user.updateProfile(displayName: name);
+    _db.collection('users').doc(user.uid).set({
+      'sentVerificationEmailDate': DateTime.now(),
+    }, SetOptions(merge: true));
     return user;
   }
 }
