@@ -9,12 +9,4 @@ class DBService {
 
   // constructor
   DBService() {}
-
-  Stream<Chat> getChatStream(chatID) {
-    return _db
-        .collection('chats')
-        .doc(chatID)
-        .snapshots()
-        .map((snapshot) => Chat.fromSnapshot(snapshot, chatID));
-  }
 }

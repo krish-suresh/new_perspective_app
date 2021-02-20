@@ -149,6 +149,7 @@ class RegisterPage extends StatelessWidget {
 class RegisterForm extends StatelessWidget {
   RegisterForm({Key key}) : super(key: key);
   final AuthService _authService = new AuthService();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   @override
@@ -156,6 +157,12 @@ class RegisterForm extends StatelessWidget {
     return Container(
       child: Column(
         children: [
+          Container(
+            padding: EdgeInsets.all(15),
+            child: TextField(
+              controller: nameController,
+            ),
+          ),
           Container(
             padding: EdgeInsets.all(15),
             child: TextField(
@@ -170,7 +177,9 @@ class RegisterForm extends StatelessWidget {
           ),
           RaisedButton(
             onPressed: () => _authService.handleSignUp(
-                email: emailController.text, password: passwordController.text),
+                email: emailController.text,
+                password: passwordController.text,
+                name: nameController.text),
             child: Text('Register'),
           )
         ],
@@ -185,6 +194,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User user = context.watch<User>();
+    User toUser;
     AuthService _authService = new AuthService();
     DBService _db = DBService();
     return Material(
@@ -194,9 +204,18 @@ class HomePage extends StatelessWidget {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 100,
+              height: 50,
             ),
-            Text(user.email),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(user.email),
+                RaisedButton(
+                  onPressed: () => _authService.signOut(),
+                  child: Text('Sign Out'),
+                )
+              ],
+            ),
             StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('chats')
@@ -212,15 +231,13 @@ class HomePage extends StatelessWidget {
                   return Text("Loading");
                 }
                 // return Text(snapshot.data['createdAt']);
+                if (toUser == null) {
+                  // toUser = FirebaseFirestore.instance.collection('Users').
+                }
                 return ChatWidget(
-                    chat: Chat.fromSnapshot(
-                        snapshot.data, 'YeuRc4NmQ8NPY9QsJ95T'));
+                    chat: Chat.fromSnapshot(snapshot.data, toUser));
               },
             ),
-            RaisedButton(
-              onPressed: () => _authService.signOut(),
-              child: Text('Sign Out'),
-            )
           ],
         ),
       )),
@@ -237,6 +254,7 @@ class ChatWidget extends StatelessWidget {
     // Chat chat = context.watch<Chat>();
     TextEditingController messagingFieldController = TextEditingController();
     User user = context.watch<User>();
+    double cWidth = MediaQuery.of(context).size.width * 0.95;
 
     return Container(
       child: Column(
@@ -244,19 +262,92 @@ class ChatWidget extends StatelessWidget {
           chat != null
               ? MessageList(messages: chat.messages)
               : Text('Loading Chat'),
-          TextField(
-            controller: messagingFieldController,
+          chat != null
+              ? UserTypingWidget(displayName: user.displayName)
+              : Container(),
+          Container(
+            width: cWidth,
+            child: TextField(
+              onChanged: (value) => chat.updateUsersTyping(
+                  messagingFieldController.text != "", user.uid),
+              controller: messagingFieldController,
+              decoration: InputDecoration(
+                hintText: "Enter a message",
+                suffixIcon: IconButton(
+                  onPressed: () => chat.sendMessage(
+                      content: messagingFieldController.text,
+                      contentType: 'text',
+                      userID: user.uid),
+                  icon: Icon(Icons.arrow_upward),
+                ),
+              ),
+            ),
           ),
-          RaisedButton(
-            child: Text("Send"),
-            onPressed: () => chat.sendMessage(
-                content: messagingFieldController.text,
-                contentType: 'text',
-                userID: user.uid),
-          )
         ],
       ),
     );
+  }
+}
+
+class UserTypingWidget extends StatelessWidget {
+  final String displayName;
+  const UserTypingWidget({Key key, this.displayName}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: [
+          Text("$displayName is typing"),
+          // JumpingDotsProgressIndicator(
+          //   numberOfDots: 6,
+          // ),
+        ],
+      ),
+    );
+  }
+}
+
+class JumpingDot extends AnimatedWidget {
+  JumpingDot({Key key, Animation<double> animation})
+      : super(key: key, listenable: animation);
+
+  Widget build(BuildContext context) {
+    final Animation<double> animation = listenable;
+    return Container(
+      height: animation.value,
+      child: Text('.'),
+    );
+  }
+}
+
+class JumpingDotsProgressIndicator extends StatefulWidget {
+  final int numberOfDots;
+  final double beginTweenValue = 0.0;
+  final double endTweenValue = 8.0;
+
+  JumpingDotsProgressIndicator({
+    this.numberOfDots = 3,
+  });
+
+  _JumpingDotsProgressIndicatorState createState() =>
+      _JumpingDotsProgressIndicatorState(
+        numberOfDots: this.numberOfDots,
+      );
+}
+
+class _JumpingDotsProgressIndicatorState
+    extends State<JumpingDotsProgressIndicator> with TickerProviderStateMixin {
+  int numberOfDots;
+  List<AnimationController> controllers = new List<AnimationController>();
+  List<Animation<double>> animations = new List<Animation<double>>();
+  List<Widget> _widgets = new List<Widget>();
+
+  _JumpingDotsProgressIndicatorState({
+    this.numberOfDots,
+  });
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 
@@ -289,15 +380,54 @@ class MessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User user = context.watch<User>();
+    bool sentByMe = user.uid == message.userID;
     Widget contentWidget = Text("");
     switch (message.contentType) {
       case "text":
-        contentWidget = Text(message.content);
+        contentWidget = Container(
+          margin: EdgeInsets.all(2),
+          padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+          decoration: BoxDecoration(
+            color: sentByMe ? Colors.blue : Colors.green,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+          ),
+          child: Text(
+            message.content,
+          ),
+        );
         break;
       default:
     }
+    double cWidth = MediaQuery.of(context).size.width * 0.9;
+
     return Container(
-      child: contentWidget,
+      // padding: EdgeInsets.all(16.0),
+      width: cWidth,
+      child: sentByMe
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                contentWidget,
+                user.photoURL != null
+                    ? Container(
+                        width: 25,
+                        height: 25,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: NetworkImage(user.photoURL),
+                          ),
+                        ),
+                      )
+                    : Container(),
+              ],
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [contentWidget],
+            ),
     );
   }
 }

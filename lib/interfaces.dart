@@ -8,7 +8,6 @@ class Message {
   final String userID;
   const Message({this.userID, this.contentType, this.content, this.sentAt});
   factory Message.fromJSON(Map<String, dynamic> data) {
-    print(data);
     return Message(
         userID: data['userID'],
         content: data['content'],
@@ -33,20 +32,21 @@ class Chat {
   final List<String> userIDs;
   final String chatID;
   List<Message> messages;
-  List<User> usersTyping;
-  Chat({this.createdAt, this.userIDs, this.chatID});
+  Map<String, bool> usersTyping;
+  final User toUser;
+  Chat({this.toUser, this.createdAt, this.userIDs, this.chatID});
 
-  factory Chat.fromSnapshot(DocumentSnapshot snapshot, String chatID) {
+  factory Chat.fromSnapshot(DocumentSnapshot snapshot, User toUser) {
     Map<String, dynamic> chatData = snapshot.data();
-    print("CHATID: " + snapshot.id);
     Chat chat = Chat(
-      chatID: snapshot.id,
-      userIDs: List.from(chatData['users']),
-      createdAt: chatData['createdAt'].toDate(),
-    );
+        chatID: snapshot.id,
+        userIDs: List.from(chatData['users']),
+        createdAt: chatData['createdAt'].toDate(),
+        toUser: toUser);
     chat.messages = List<Message>.from(
         chatData['messages'].map((data) => Message.fromJSON(data)));
     chat.messages.sort((a, b) => a.sentAt.isAfter(b.sentAt) ? 1 : -1);
+    chat.usersTyping = Map<String, bool>.from(chatData['usersTyping']);
     return chat;
   }
 
@@ -54,7 +54,16 @@ class Chat {
     return null;
   }
 
-  void updateUsersTyping() {}
+  void updateUsersTyping(bool typing, String userid) {
+    print(usersTyping);
+    if (usersTyping[userid] != typing) {
+      print(typing.toString() + " " + userid);
+      FirebaseFirestore.instance
+          .collection('chats')
+          .doc(chatID)
+          .update({'usersTyping.' + userid: typing});
+    }
+  }
 
   sendMessage({String content, String contentType, String userID}) {
     Message message = Message(
@@ -62,10 +71,7 @@ class Chat {
         contentType: contentType,
         userID: userID,
         sentAt: DateTime.now());
-    FirebaseFirestore.instance
-        .collection('chats')
-        .doc('YeuRc4NmQ8NPY9QsJ95T')
-        .update({
+    FirebaseFirestore.instance.collection('chats').doc(chatID).update({
       'messages': FieldValue.arrayUnion([message.toJson()])
     });
   }
