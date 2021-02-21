@@ -1,5 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
+import 'package:newPerspectiveApp/interfaces.dart';
 import 'package:newPerspectiveApp/services/auth.dart';
 
 import '../main.dart';

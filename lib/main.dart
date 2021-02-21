@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:newPerspectiveApp/chatsWidgets/chat.dart';
@@ -32,10 +31,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthService authService = new AuthService();
     return MultiProvider(
       providers: [
         StreamProvider<User>.value(
-          value: FirebaseAuth.instance.authStateChanges(),
+          value: authService.authStateChanges(),
         ),
       ],
       child: MaterialApp(

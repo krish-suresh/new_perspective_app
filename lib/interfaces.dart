@@ -52,9 +52,7 @@ class Chat {
 
   void updateUsersTyping(String userid) {
     bool typing = currentMessageText != "";
-    print(usersTyping);
     if (usersTyping[userid] != typing) {
-      print(typing.toString() + " " + userid);
       FirebaseFirestore.instance
           .collection('chats')
           .doc(chatID)
@@ -63,6 +61,7 @@ class Chat {
   }
 
   sendMessage({String content, String contentType, String userID}) {
+    print("Sending Message: " + content);
     Message message = Message(
         content: content,
         contentType: contentType,
@@ -71,5 +70,32 @@ class Chat {
     FirebaseFirestore.instance.collection('chats').doc(chatID).update({
       'messages': FieldValue.arrayUnion([message.toJson()])
     });
+  }
+}
+
+class User {
+  final Map<String, dynamic> userProfile;
+  String uid;
+  // final String email;
+  String photoURL;
+  String displayName;
+  // final DateTime createdAt;
+  // final DateTime lastSeen;
+  Map<String, dynamic> userDemographicData;
+  User(this.userProfile);
+
+  factory User.fromSnapshot(DocumentSnapshot userDoc) {
+    Map<String, dynamic> userData = userDoc.data();
+    //TODO make this more typed
+    User user = User(userData);
+    user.uid = userData['uid'];
+    user.displayName = userData['displayName'];
+    user.photoURL = userData['photoURL'];
+    return user;
+  }
+  static Future<User> getUserFromID(String uid) async {
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return User.fromSnapshot(userDoc);
   }
 }
