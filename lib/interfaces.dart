@@ -45,7 +45,7 @@ class Chat {
     );
     chat.messages = List<Message>.from(
         chatData['messages'].map((data) => Message.fromJSON(data)));
-    chat.messages.sort((a, b) => a.sentAt.isAfter(b.sentAt) ? 1 : -1);
+    chat.messages.sort((a, b) => a.sentAt.isBefore(b.sentAt) ? 1 : -1);
     chat.usersTyping = Map<String, bool>.from(chatData['usersTyping']);
     return chat;
   }

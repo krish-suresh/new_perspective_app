@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:newPerspectiveApp/interfaces.dart';
+import 'package:new_perspective_app/interfaces.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatelessWidget {
@@ -33,11 +33,45 @@ class _ChatWidgetState extends State<ChatWidget> {
     // Chat chat = context.watch<Chat>();
     TextEditingController messagingFieldController = TextEditingController();
     User user = context.watch<User>();
+
     double cWidth = MediaQuery.of(context).size.width * 0.95;
-    return Container(
-      child: Column(
-        children: [
-          StreamBuilder<DocumentSnapshot>(
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      verticalDirection: VerticalDirection.up,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Expanded(
+              child: TextField(
+                onChanged: (value) {
+                  chat.currentMessageText = messagingFieldController.text;
+                  chat.updateUsersTyping(user.uid);
+                },
+                controller: messagingFieldController,
+                decoration: InputDecoration(
+                  hintText: "Enter a message",
+                ),
+              ),
+            ),
+            Container(
+              child: IconButton(
+                onPressed: () {
+                  chat.sendMessage(
+                      content: messagingFieldController.text,
+                      contentType: 'text',
+                      userID: user.uid);
+                  messagingFieldController.clear();
+                  chat.currentMessageText = messagingFieldController.text;
+                  chat.updateUsersTyping(user.uid);
+                },
+                icon: Icon(Icons.arrow_upward),
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: StreamBuilder<DocumentSnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('chats')
                 .doc(widget.chatid)
@@ -56,51 +90,18 @@ class _ChatWidgetState extends State<ChatWidget> {
               if (chat != null && !usersLoaded) {
                 loadUsers();
               }
-              return Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    MessageList(messages: chat.messages),
-                    chat != null && usersLoaded
-                        ? UserTypingWidget(chat.usersTyping, users)
-                        : Container(),
-                  ],
-                ),
-              );
+              // usersLoaded
+              // ? UserTypingWidget(chat.usersTyping, users)
+              // : Container(),
+              return MessageList(chat, usersLoaded, users);
             },
           ),
-          Container(
-            width: cWidth,
-            child: TextField(
-              onChanged: (value) {
-                chat.currentMessageText = messagingFieldController.text;
-                chat.updateUsersTyping(user.uid);
-              },
-              controller: messagingFieldController,
-              decoration: InputDecoration(
-                hintText: "Enter a message",
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    chat.sendMessage(
-                        content: messagingFieldController.text,
-                        contentType: 'text',
-                        userID: user.uid);
-                    messagingFieldController.clear();
-                    chat.currentMessageText = messagingFieldController.text;
-                    chat.updateUsersTyping(user.uid);
-                  },
-                  icon: Icon(Icons.arrow_upward),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   void loadUsers() async {
-    print("LOading users");
     users.clear();
     for (String uid in chat.userIDs) {
       users.add(await User.getUserFromID(uid));
@@ -155,55 +156,31 @@ class JumpingDot extends AnimatedWidget {
   }
 }
 
-class JumpingDotsProgressIndicator extends StatefulWidget {
-  final int numberOfDots;
-  final double beginTweenValue = 0.0;
-  final double endTweenValue = 8.0;
-
-  JumpingDotsProgressIndicator({
-    this.numberOfDots = 3,
-  });
-
-  _JumpingDotsProgressIndicatorState createState() =>
-      _JumpingDotsProgressIndicatorState(
-        numberOfDots: this.numberOfDots,
-      );
-}
-
-class _JumpingDotsProgressIndicatorState
-    extends State<JumpingDotsProgressIndicator> with TickerProviderStateMixin {
-  int numberOfDots;
-  List<AnimationController> controllers = new List<AnimationController>();
-  List<Animation<double>> animations = new List<Animation<double>>();
-  List<Widget> _widgets = new List<Widget>();
-
-  _JumpingDotsProgressIndicatorState({
-    this.numberOfDots,
-  });
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
 class MessageList extends StatelessWidget {
-  final List<Message> messages;
-  const MessageList({Key key, this.messages}) : super(key: key);
+  final Chat chat;
+  final bool usersLoaded;
+  final List<User> users;
+  const MessageList(this.chat, this.usersLoaded, this.users, {Key key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return messages != null
-        ? Expanded(
-            child: Container(
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                // shrinkWrap: true,
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: MessageWidget(message: messages[index]),
-                  );
-                },
-              ),
+    return chat.messages != null
+        ? Container(
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              reverse: true,
+              itemCount: chat.messages.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return usersLoaded
+                      ? UserTypingWidget(chat.usersTyping, users)
+                      : Container();
+                }
+                return ListTile(
+                  title: MessageWidget(message: chat.messages[index - 1]),
+                );
+              },
             ),
           )
         : Text('Messages Loading');
@@ -265,5 +242,35 @@ class MessageWidget extends StatelessWidget {
               children: [contentWidget],
             ),
     );
+  }
+}
+
+class JumpingDotsProgressIndicator extends StatefulWidget {
+  final int numberOfDots;
+  final double beginTweenValue = 0.0;
+  final double endTweenValue = 8.0;
+
+  JumpingDotsProgressIndicator({
+    this.numberOfDots = 3,
+  });
+
+  _JumpingDotsProgressIndicatorState createState() =>
+      _JumpingDotsProgressIndicatorState(
+        numberOfDots: this.numberOfDots,
+      );
+}
+
+class _JumpingDotsProgressIndicatorState
+    extends State<JumpingDotsProgressIndicator> with TickerProviderStateMixin {
+  int numberOfDots;
+  List<AnimationController> controllers = new List<AnimationController>();
+  List<Animation<double>> animations = new List<Animation<double>>();
+  List<Widget> _widgets = new List<Widget>();
+
+  _JumpingDotsProgressIndicatorState({
+    this.numberOfDots,
+  });
+  Widget build(BuildContext context) {
+    return Container();
   }
 }

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:newPerspectiveApp/chatsWidgets/chat.dart';
-import 'package:newPerspectiveApp/services/auth.dart';
-import 'package:newPerspectiveApp/services/db.dart';
+import 'package:new_perspective_app/chatsWidgets/chat.dart';
+import 'package:new_perspective_app/services/auth.dart';
+import 'package:new_perspective_app/services/db.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 

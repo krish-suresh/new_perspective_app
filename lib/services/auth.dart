@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:newPerspectiveApp/interfaces.dart';
+import 'package:new_perspective_app/interfaces.dart';
 
 class AuthService {
   // Dependencies

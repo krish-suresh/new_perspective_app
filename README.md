@@ -1,4 +1,4 @@
-# newPerspectiveApp
+# new_perspective_app
 
 A new Flutter project.
 
