@@ -33,16 +33,16 @@ class Chat {
   final String chatID;
   List<Message> messages;
   Map<String, bool> usersTyping;
-  final User toUser;
-  Chat({this.toUser, this.createdAt, this.userIDs, this.chatID});
+  String currentMessageText = "";
+  Chat({this.createdAt, this.userIDs, this.chatID});
 
-  factory Chat.fromSnapshot(DocumentSnapshot snapshot, User toUser) {
+  factory Chat.fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> chatData = snapshot.data();
     Chat chat = Chat(
-        chatID: snapshot.id,
-        userIDs: List.from(chatData['users']),
-        createdAt: chatData['createdAt'].toDate(),
-        toUser: toUser);
+      chatID: snapshot.id,
+      userIDs: List.from(chatData['users']),
+      createdAt: chatData['createdAt'].toDate(),
+    );
     chat.messages = List<Message>.from(
         chatData['messages'].map((data) => Message.fromJSON(data)));
     chat.messages.sort((a, b) => a.sentAt.isAfter(b.sentAt) ? 1 : -1);
@@ -50,11 +50,8 @@ class Chat {
     return chat;
   }
 
-  Stream<List<Message>> getMessageStream() {
-    return null;
-  }
-
-  void updateUsersTyping(bool typing, String userid) {
+  void updateUsersTyping(String userid) {
+    bool typing = currentMessageText != "";
     print(usersTyping);
     if (usersTyping[userid] != typing) {
       print(typing.toString() + " " + userid);
