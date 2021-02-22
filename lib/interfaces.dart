@@ -76,14 +76,13 @@ class Chat {
 class User {
   final Map<String, dynamic> userProfile;
   String uid;
-  // final String email;
+  String email;
   String photoURL;
   String displayName;
-  // final DateTime createdAt;
-  // final DateTime lastSeen;
+  DateTime createdAt;
+  DateTime lastSeen;
   Map<String, dynamic> userDemographicData;
-  User(this.userProfile);
-
+  User(this.userProfile, {this.uid});
   factory User.fromSnapshot(DocumentSnapshot userDoc) {
     Map<String, dynamic> userData = userDoc.data();
     //TODO make this more typed
@@ -97,5 +96,11 @@ class User {
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
     return User.fromSnapshot(userDoc);
+  }
+
+  Map<String, dynamic> toJson(){
+    return {
+      uid: uid, // TODO add more fields
+    };
   }
 }

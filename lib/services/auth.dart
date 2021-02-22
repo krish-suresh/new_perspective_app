@@ -92,4 +92,17 @@ class AuthService {
       return User.fromSnapshot(userDoc);
     });
   }
+
+  signUpGoogle() {}
+
+  signUpAnonymous() async {
+    UserCredential userCredential = await _auth.signInAnonymously();
+    print("UID: " + userCredential.user.uid);
+    User user = User({}, uid: userCredential.user.uid, );
+    await createUserProfile(user);
+  }
+
+  createUserProfile(User user) async {
+    await _db.collection('users').doc(user.uid).set(user.toJson());
+  }
 }
