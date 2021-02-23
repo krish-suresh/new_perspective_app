@@ -118,6 +118,7 @@ class AuthService {
       'lastSeen': Timestamp.now(),
       'createdAt': Timestamp.now(),
       'registered': false,
+      'isVerified': true
     });
     print("Signing in google: " + user.uid);
     await createUserProfile(user);
@@ -132,6 +133,7 @@ class AuthService {
       'lastSeen': Timestamp.now(),
       'createdAt': Timestamp.now(),
       'registered': false,
+      'isVerified': true
     });
     print("Signing in guest: " + user.uid);
     await createUserProfile(user);

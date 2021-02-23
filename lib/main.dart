@@ -54,38 +54,62 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User user = context.watch<User>();
-    User toUser;
     AuthService _authService = new AuthService();
     Chat chat;
+    bool userVerified = user.isVerified ?? false;
+    bool userRegistered = user.registered ?? false;
     return Scaffold(
-      appBar: AppBar(),
       body: Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Spacer(
+                flex: 4,
+              ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Spacer(
+                    flex: 1,
+                  ),
                   Text(
                     "Hi ${user.displayName}!",
                     style: Theme.of(context).textTheme.headline1,
                   ),
+                  Spacer(
+                    flex: 5,
+                  ),
                   IconButton(
                     onPressed: () => _authService.signOut(),
                     icon: Icon(Icons.logout),
-                  )
+                  ),
+                  Spacer(
+                    flex: 1,
+                  ),
                 ],
               ),
-              Text("Connect Chat"),
+              Expanded(
+                child: Center(child: Text("CHAT HISTORY COMING SOON")),
+                flex: 25,
+              ),
+              Text("Find a new perspective"),
+              Spacer(
+                flex: 1,
+              ),
               IconButton(
-                  icon: Icon(Icons.remove_red_eye_outlined),
-                  onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ChatPage('YeuRc4NmQ8NPY9QsJ95T')),
-                      )),
+                icon: Icon(
+                  Icons.remove_red_eye_outlined,
+                  size: 50,
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChatPage('YeuRc4NmQ8NPY9QsJ95T')),
+                ),
+              ),
+              Spacer(
+                flex: 2,
+              ),
             ],
           )),
     );

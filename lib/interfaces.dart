@@ -83,25 +83,29 @@ class User {
   Timestamp lastSeen;
   bool registered;
   Map<String, dynamic> userDemographicData;
-  User(
-    this.userProfile, {
-    this.uid,
-    this.displayName,
-    this.lastSeen,
-    this.photoURL,
-    this.email,
-    this.createdAt,
-    this.registered,
-  });
+
+  bool isVerified;
+  User(this.userProfile,
+      {this.uid,
+      this.displayName,
+      this.lastSeen,
+      this.photoURL,
+      this.email,
+      this.createdAt,
+      this.registered,
+      this.isVerified});
   factory User.fromJson(Map<String, dynamic> userData) {
-    User user = User(userData,
-        uid: userData['uid'],
-        displayName: userData['displayName'],
-        lastSeen: userData['lastSeen'],
-        photoURL: userData['photoURL'],
-        email: userData['email'],
-        createdAt: userData['createdAt'],
-        registered: userData['registered']);
+    User user = User(
+      userData,
+      uid: userData['uid'],
+      displayName: userData['displayName'],
+      lastSeen: userData['lastSeen'],
+      photoURL: userData['photoURL'],
+      email: userData['email'],
+      createdAt: userData['createdAt'],
+      registered: userData['registered'],
+      isVerified: userData['isVerified'],
+    );
     user.uid = userData['uid'];
     user.displayName = userData['displayName'];
     user.photoURL = userData['photoURL'];
@@ -121,7 +125,8 @@ class User {
       'displayName': displayName,
       'createdAt': createdAt,
       'lastSeen': lastSeen,
-      'registered': registered
+      'registered': registered,
+      'isVerified': isVerified
     };
   }
 }
