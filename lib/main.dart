@@ -69,58 +69,60 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Spacer(
-                flex: 4,
-              ),
-              Row(
-                children: [
-                  Spacer(
-                    flex: 1,
-                  ),
-                  Text(
-                    "Hi ${user.displayName}!",
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                  Spacer(
-                    flex: 5,
-                  ),
-                  IconButton(
-                    onPressed: () => _authService.signOut(),
-                    icon: Icon(Icons.logout),
-                  ),
-                  Spacer(
-                    flex: 1,
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Center(child: Text("CHAT HISTORY COMING SOON")),
-                flex: 25,
-              ),
-              Text("Find a new perspective"),
-              Spacer(
-                flex: 1,
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.remove_red_eye_outlined,
-                  size: 50,
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Spacer(
+              flex: 4,
+            ),
+            Row(
+              children: [
+                Spacer(
+                  flex: 1,
                 ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChatPage('YeuRc4NmQ8NPY9QsJ95T')),
+                Text(
+                  "Hi ${user.displayName}!",
+                  style: Theme.of(context).textTheme.headline1,
                 ),
+                Spacer(
+                  flex: 5,
+                ),
+                IconButton(
+                  onPressed: () => _authService.signOut(),
+                  icon: Icon(Icons.logout),
+                ),
+                Spacer(
+                  flex: 1,
+                ),
+              ],
+            ),
+            Expanded(
+              child: Center(child: Text("CHAT HISTORY COMING SOON")),
+              flex: 25,
+            ),
+            Text("Find a new perspective"),
+            Spacer(
+              flex: 1,
+            ),
+            IconButton(
+              padding: new EdgeInsets.all(0.0),
+              icon: Icon(
+                Icons.remove_red_eye_outlined,
+                size: 50,
               ),
-              Spacer(
-                flex: 2,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChatPage('YeuRc4NmQ8NPY9QsJ95T')),
               ),
-            ],
-          )),
+            ),
+            Spacer(
+              flex: 2,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
