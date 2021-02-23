@@ -63,11 +63,11 @@ class AuthService {
     //     {'uid': user.uid, 'lastSeen': DateTime.now()}, SetOptions(merge: true));
   }
 
-  void signOut() {
-    _auth.signOut();
+  void signOut() async{
+    await _auth.signOut();
   }
 
-  Future<User> handleSignUp(
+  signUpEmail(
       {String email, String password, String name}) async {
     // print("User Started");
     // UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -87,18 +87,34 @@ class AuthService {
 
   Stream<User> authStateChanges() {
     return _auth.authStateChanges().asyncMap((user) async {
+      if (user == null) {
+        return null;
+      }
       DocumentSnapshot userDoc =
           await _db.collection('users').doc(user.uid).get();
       return User.fromSnapshot(userDoc);
     });
   }
 
-  signUpGoogle() {}
+  signUpGoogle() async {
+    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    UserCredential userCredential = await _auth.signInWithCredential(credential);
+    print("UID: " + userCredential.user.uid);
+    User user = User({}, uid: userCredential.user.uid, );
+    print("UID: " + user.uid);
+    await createUserProfile(user);
+  }
 
   signUpAnonymous() async {
     UserCredential userCredential = await _auth.signInAnonymously();
     print("UID: " + userCredential.user.uid);
     User user = User({}, uid: userCredential.user.uid, );
+    print("UID: " + user.uid);
     await createUserProfile(user);
   }
 

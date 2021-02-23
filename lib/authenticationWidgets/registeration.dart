@@ -65,7 +65,7 @@ class RegisterForm extends StatelessWidget {
             ),
           ),
           RaisedButton(
-            onPressed: () => _authService.handleSignUp(
+            onPressed: () => _authService.signUpEmail(
                 email: emailController.text,
                 password: passwordController.text,
                 name: nameController.text),

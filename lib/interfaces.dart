@@ -82,7 +82,9 @@ class User {
   DateTime createdAt;
   DateTime lastSeen;
   Map<String, dynamic> userDemographicData;
-  User(this.userProfile, {this.uid});
+  User(this.userProfile, {this.uid}) {
+    createdAt = DateTime.now();
+  }
   factory User.fromSnapshot(DocumentSnapshot userDoc) {
     Map<String, dynamic> userData = userDoc.data();
     //TODO make this more typed
@@ -100,7 +102,13 @@ class User {
 
   Map<String, dynamic> toJson(){
     return {
-      uid: uid, // TODO add more fields
+      'uid': uid, // TODO add more fields
+      'email': email,
+      'photoURL': photoURL,
+      'displayName': displayName,
+      'createdAt': createdAt,
+      'lastSeen': lastSeen,
+
     };
   }
 }
