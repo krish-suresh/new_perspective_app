@@ -1,14 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/chatsWidgets/chat.dart';
 import 'package:new_perspective_app/services/auth.dart';
-import 'package:new_perspective_app/services/db.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'authenticationWidgets/signin.dart';
 import 'authenticationWidgets/useremailnotverifiedpage.dart';
+import 'authenticationWidgets/userinfoformpage.dart';
 import 'interfaces.dart';
 
 void main() async {
@@ -60,8 +59,8 @@ class HomePage extends StatelessWidget {
     Chat chat;
     bool userVerified = user.isVerified ?? false;
     bool userRegistered = user.registered ?? false;
-    if (!userRegistered && false) {
-      // return UserInfoFormPage();
+    if (!userRegistered) {
+      return UserInfoFormPage();
     }
 
     if (!userVerified) {

@@ -129,4 +129,11 @@ class User {
       'isVerified': isVerified
     };
   }
+
+  registerUser(String text) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .set({'registered': true}, SetOptions(merge: true));
+  }
 }

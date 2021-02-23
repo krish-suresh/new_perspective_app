@@ -199,6 +199,7 @@ class MessageWidget extends StatelessWidget {
     switch (message.contentType) {
       case "text":
         contentWidget = Container(
+          width: MediaQuery.of(context).size.width * 0.5,
           margin: EdgeInsets.all(2),
           padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
           decoration: BoxDecoration(
