@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:new_perspective_app/interfaces.dart';
@@ -6,7 +6,7 @@ import 'package:new_perspective_app/interfaces.dart';
 class AuthService {
   // Dependencies
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth.FirebaseAuth _auth = FirebaseAuth.FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // constructor
@@ -15,11 +15,13 @@ class AuthService {
   Future<User> googleSignIn() async {
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+    final FirebaseAuth.GoogleAuthCredential credential =
+        FirebaseAuth.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    UserCredential userCreds = await _auth.signInWithCredential(credential);
+    FirebaseAuth.UserCredential userCreds =
+        await _auth.signInWithCredential(credential);
     // updateUserData(userCreds.user);
 
     return User.getUserFromID(userCreds.user.uid);
@@ -58,17 +60,17 @@ class AuthService {
   }
 
   void updateUserData(User user) async {
-    // print("Updating User: " + user.uid);
-    // _db.collection('users').doc(user.uid).set(
-    //     {'uid': user.uid, 'lastSeen': DateTime.now()}, SetOptions(merge: true));
+    print("Updating User: " + user.uid);
+    _db.collection('users').doc(user.uid).set(
+        {'uid': user.uid, 'lastSeen': Timestamp.now()},
+        SetOptions(merge: true));
   }
 
-  void signOut() async{
+  void signOut() async {
     await _auth.signOut();
   }
 
-  signUpEmail(
-      {String email, String password, String name}) async {
+  signUpEmail({String email, String password, String name}) async {
     // print("User Started");
     // UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
     //     email: email, password: password);
@@ -88,33 +90,51 @@ class AuthService {
   Stream<User> authStateChanges() {
     return _auth.authStateChanges().asyncMap((user) async {
       if (user == null) {
+        print("Not Signed In");
         return null;
       }
       DocumentSnapshot userDoc =
           await _db.collection('users').doc(user.uid).get();
-      return User.fromSnapshot(userDoc);
+      return User.fromJson(userDoc.data());
     });
   }
 
   signUpGoogle() async {
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+    final FirebaseAuth.GoogleAuthCredential credential =
+        FirebaseAuth.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    UserCredential userCredential = await _auth.signInWithCredential(credential);
+    FirebaseAuth.UserCredential userCredential =
+        await _auth.signInWithCredential(credential);
     print("UID: " + userCredential.user.uid);
-    User user = User({}, uid: userCredential.user.uid, );
-    print("UID: " + user.uid);
+    FirebaseAuth.User firebaseUser = userCredential.user;
+    User user = User.fromJson({
+      'uid': firebaseUser.uid,
+      'displayName': firebaseUser.displayName,
+      'photoURL': firebaseUser.photoURL,
+      'email': firebaseUser.email,
+      'lastSeen': Timestamp.now(),
+      'createdAt': Timestamp.now(),
+      'registered': false,
+    });
+    print("Signing in google: " + user.uid);
     await createUserProfile(user);
   }
 
   signUpAnonymous() async {
-    UserCredential userCredential = await _auth.signInAnonymously();
-    print("UID: " + userCredential.user.uid);
-    User user = User({}, uid: userCredential.user.uid, );
-    print("UID: " + user.uid);
+    FirebaseAuth.UserCredential userCredential =
+        await _auth.signInAnonymously();
+    User user = User.fromJson({
+      'uid': userCredential.user.uid,
+      'displayName': "Guest",
+      'lastSeen': Timestamp.now(),
+      'createdAt': Timestamp.now(),
+      'registered': false,
+    });
+    print("Signing in guest: " + user.uid);
     await createUserProfile(user);
   }
 

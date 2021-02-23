@@ -79,16 +79,29 @@ class User {
   String email;
   String photoURL;
   String displayName;
-  DateTime createdAt;
-  DateTime lastSeen;
+  Timestamp createdAt;
+  Timestamp lastSeen;
+  bool registered;
   Map<String, dynamic> userDemographicData;
-  User(this.userProfile, {this.uid}) {
-    createdAt = DateTime.now();
-  }
-  factory User.fromSnapshot(DocumentSnapshot userDoc) {
-    Map<String, dynamic> userData = userDoc.data();
-    //TODO make this more typed
-    User user = User(userData);
+  User(
+    this.userProfile, {
+    this.uid,
+    this.displayName,
+    this.lastSeen,
+    this.photoURL,
+    this.email,
+    this.createdAt,
+    this.registered,
+  });
+  factory User.fromJson(Map<String, dynamic> userData) {
+    User user = User(userData,
+        uid: userData['uid'],
+        displayName: userData['displayName'],
+        lastSeen: userData['lastSeen'],
+        photoURL: userData['photoURL'],
+        email: userData['email'],
+        createdAt: userData['createdAt'],
+        registered: userData['registered']);
     user.uid = userData['uid'];
     user.displayName = userData['displayName'];
     user.photoURL = userData['photoURL'];
@@ -97,10 +110,10 @@ class User {
   static Future<User> getUserFromID(String uid) async {
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    return User.fromSnapshot(userDoc);
+    return User.fromJson(userDoc.data());
   }
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       'uid': uid, // TODO add more fields
       'email': email,
@@ -108,7 +121,7 @@ class User {
       'displayName': displayName,
       'createdAt': createdAt,
       'lastSeen': lastSeen,
-
+      'registered': registered
     };
   }
 }
