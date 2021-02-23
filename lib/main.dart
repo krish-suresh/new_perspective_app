@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'authenticationWidgets/signin.dart';
+import 'authenticationWidgets/useremailnotverifiedpage.dart';
 import 'interfaces.dart';
 
 void main() async {
@@ -58,6 +59,14 @@ class HomePage extends StatelessWidget {
     Chat chat;
     bool userVerified = user.isVerified ?? false;
     bool userRegistered = user.registered ?? false;
+    if (!userRegistered && false) {
+      // return UserInfoFormPage();
+    }
+
+    if (!userVerified || true) {
+      return UserEmailNotVerifiedPage();
+    }
+
     return Scaffold(
       body: Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
