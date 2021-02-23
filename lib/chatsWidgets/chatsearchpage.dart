@@ -24,7 +24,13 @@ class ChatSearchPage extends StatelessWidget {
                     builder: (context) => ChatPage(snapshot.data)),
               );
             }
-            return Center(child: Text("Searching for chat..."));
+            return Center(
+                child: Column(
+              children: [
+                CircularProgressIndicator(),
+                Text("Searching for chat..."),
+              ],
+            ));
           }),
     );
   }
