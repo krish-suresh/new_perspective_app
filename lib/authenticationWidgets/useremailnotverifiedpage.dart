@@ -14,7 +14,7 @@ class UserEmailNotVerifiedPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Please verify your email.",
+              "Please verify your email to proceed.",
               style: Theme.of(context).textTheme.headline6,
               textAlign: TextAlign.center,
             ),
@@ -23,7 +23,9 @@ class UserEmailNotVerifiedPage extends StatelessWidget {
               size: 100,
             ),
             ElevatedButton(
-              // onPressed: () {},
+              onPressed: () {
+                print("TODO Impl");
+              },
               child: Text("Press to resend verification email."),
             ),
             Text(

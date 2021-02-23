@@ -55,6 +55,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User user = context.watch<User>();
+    print("On Home Page");
     AuthService _authService = new AuthService();
     Chat chat;
     bool userVerified = user.isVerified ?? false;
@@ -63,7 +64,7 @@ class HomePage extends StatelessWidget {
       // return UserInfoFormPage();
     }
 
-    if (!userVerified || true) {
+    if (!userVerified) {
       return UserEmailNotVerifiedPage();
     }
 
