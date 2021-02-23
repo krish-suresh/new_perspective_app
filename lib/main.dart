@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/chatsWidgets/chat.dart';
+import 'package:new_perspective_app/chatsWidgets/chatsearchpage.dart';
 import 'package:new_perspective_app/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -113,8 +114,7 @@ class HomePage extends StatelessWidget {
               ),
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => ChatPage('YeuRc4NmQ8NPY9QsJ95T')),
+                MaterialPageRoute(builder: (context) => ChatSearchPage()),
               ),
             ),
             Spacer(
