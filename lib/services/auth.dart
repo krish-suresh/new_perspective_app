@@ -23,8 +23,7 @@ class AuthService {
     FirebaseAuth.UserCredential userCreds =
         await _auth.signInWithCredential(credential);
     // updateUserData(userCreds.user);
-
-    return User.getUserFromID(userCreds.user.uid);
+    return await User.getUserFromID(userCreds.user.uid);
   }
 
   Future<User> signIn({String email, String password}) async {

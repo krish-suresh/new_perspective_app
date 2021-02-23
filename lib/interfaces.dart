@@ -110,7 +110,7 @@ class User {
   static Future<User> getUserFromID(String uid) async {
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    return User.fromJson(userDoc.data());
+    return userDoc != null ? User.fromJson(userDoc.data()) : null;
   }
 
   Map<String, dynamic> toJson() {

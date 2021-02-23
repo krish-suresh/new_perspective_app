@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
     fontFamily: 'Roboto',
     textTheme: TextTheme(
       headline1: TextStyle(fontSize: 25, color: Colors.black),
-      headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+      headline6: TextStyle(
+          fontSize: 40, color: Colors.black, fontWeight: FontWeight.w200),
       bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,

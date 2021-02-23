@@ -3,6 +3,7 @@ import 'package:new_perspective_app/services/auth.dart';
 
 import '../interfaces.dart';
 import 'package:provider/provider.dart';
+import 'package:auth_buttons/auth_buttons.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key key}) : super(key: key);
@@ -18,14 +19,29 @@ class RegisterPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RegisterForm(),
-              RaisedButton(
-                onPressed: () => _authService.signUpGoogle(),
-                child: Text('Signup with Google'),
+              Spacer(
+                flex: 7,
               ),
-              RaisedButton(
+              EmailAuthButton(
+                text: 'Signup with Email',
+                // onPressed: () => print("TODO Show Form"),
+              ),
+              Spacer(
+                flex: 1,
+              ),
+              GoogleAuthButton(
+                onPressed: () => _authService.signUpGoogle(),
+                text: 'Signup with Google',
+              ),
+              Spacer(
+                flex: 1,
+              ),
+              MaterialButton(
                 onPressed: () => _authService.signUpAnonymous(),
-                child: Text('Continue as Guest'),
+                child: Text('Press to continue as Guest'),
+              ),
+              Spacer(
+                flex: 7,
               ),
             ],
           ),
@@ -64,7 +80,7 @@ class RegisterForm extends StatelessWidget {
               controller: passwordController,
             ),
           ),
-          RaisedButton(
+          MaterialButton(
             onPressed: () => _authService.signUpEmail(
                 email: emailController.text,
                 password: passwordController.text,
