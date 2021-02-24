@@ -60,7 +60,9 @@ class SignInPage extends StatelessWidget {
               Spacer(
                 flex: 7,
               ),
-              EmailAuthButton(),
+              EmailAuthButton(
+                onPressed: null,
+              ),
               Spacer(
                 flex: 1,
               ),
