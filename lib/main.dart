@@ -1,13 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/chatsWidgets/chat.dart';
+import 'package:new_perspective_app/chatsWidgets/chatsearchpage.dart';
 import 'package:new_perspective_app/services/auth.dart';
-import 'package:new_perspective_app/services/db.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'authenticationWidgets/signin.dart';
+import 'authenticationWidgets/useremailnotverifiedpage.dart';
+import 'authenticationWidgets/userinfoformpage.dart';
 import 'interfaces.dart';
 
 void main() async {
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
     fontFamily: 'Roboto',
     textTheme: TextTheme(
       headline1: TextStyle(fontSize: 25, color: Colors.black),
-      headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+      headline6: TextStyle(
+          fontSize: 40, color: Colors.black, fontWeight: FontWeight.w200),
       bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -53,40 +55,74 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User user = context.watch<User>();
-    User toUser;
+    print("On Home Page");
     AuthService _authService = new AuthService();
     Chat chat;
+    bool userVerified = user.isVerified ?? false;
+    bool userRegistered = user.registered ?? false;
+    if (!userRegistered) {
+      return UserInfoFormPage();
+    }
+
+    if (!userVerified) {
+      return UserEmailNotVerifiedPage();
+    }
+
     return Scaffold(
-      appBar: AppBar(),
       body: Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Hi ${user.displayName}!",
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                  IconButton(
-                    onPressed: () => _authService.signOut(),
-                    icon: Icon(Icons.logout),
-                  )
-                ],
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Spacer(
+              flex: 4,
+            ),
+            Row(
+              children: [
+                Spacer(
+                  flex: 1,
+                ),
+                Text(
+                  "Hi ${user.displayName}!",
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+                Spacer(
+                  flex: 5,
+                ),
+                IconButton(
+                  onPressed: () => _authService.signOut(),
+                  icon: Icon(Icons.logout),
+                ),
+                Spacer(
+                  flex: 1,
+                ),
+              ],
+            ),
+            Expanded(
+              child: Center(child: Text("CHAT HISTORY COMING SOON")),
+              flex: 25,
+            ),
+            Text("Find a new perspective"),
+            Spacer(
+              flex: 1,
+            ),
+            IconButton(
+              padding: new EdgeInsets.all(0.0),
+              icon: Icon(
+                Icons.remove_red_eye_outlined,
+                size: 50,
               ),
-              Text("Connect Chat"),
-              IconButton(
-                  icon: Icon(Icons.remove_red_eye_outlined),
-                  onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ChatPage('YeuRc4NmQ8NPY9QsJ95T')),
-                      )),
-            ],
-          )),
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => ChatSearchPage()),
+              ),
+            ),
+            Spacer(
+              flex: 2,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

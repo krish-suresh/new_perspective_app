@@ -76,18 +76,36 @@ class Chat {
 class User {
   final Map<String, dynamic> userProfile;
   String uid;
-  // final String email;
+  String email;
   String photoURL;
   String displayName;
-  // final DateTime createdAt;
-  // final DateTime lastSeen;
+  Timestamp createdAt;
+  Timestamp lastSeen;
+  bool registered;
   Map<String, dynamic> userDemographicData;
-  User(this.userProfile);
 
-  factory User.fromSnapshot(DocumentSnapshot userDoc) {
-    Map<String, dynamic> userData = userDoc.data();
-    //TODO make this more typed
-    User user = User(userData);
+  bool isVerified;
+  User(this.userProfile,
+      {this.uid,
+      this.displayName,
+      this.lastSeen,
+      this.photoURL,
+      this.email,
+      this.createdAt,
+      this.registered,
+      this.isVerified});
+  factory User.fromJson(Map<String, dynamic> userData) {
+    User user = User(
+      userData,
+      uid: userData['uid'],
+      displayName: userData['displayName'],
+      lastSeen: userData['lastSeen'],
+      photoURL: userData['photoURL'],
+      email: userData['email'],
+      createdAt: userData['createdAt'],
+      registered: userData['registered'],
+      isVerified: userData['isVerified'],
+    );
     user.uid = userData['uid'];
     user.displayName = userData['displayName'];
     user.photoURL = userData['photoURL'];
@@ -96,6 +114,30 @@ class User {
   static Future<User> getUserFromID(String uid) async {
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    return User.fromSnapshot(userDoc);
+    return userDoc != null ? User.fromJson(userDoc.data()) : null;
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uid': uid, // TODO add more fields
+      'email': email,
+      'photoURL': photoURL,
+      'displayName': displayName,
+      'createdAt': createdAt,
+      'lastSeen': lastSeen,
+      'registered': registered,
+      'isVerified': isVerified
+    };
+  }
+
+  registerUser(String text) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .set({'registered': true}, SetOptions(merge: true));
+  }
+
+  addToSearchForChat() {}
+
+  removeFromSearchForChat() {}
 }
