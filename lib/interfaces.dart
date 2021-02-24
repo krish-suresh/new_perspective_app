@@ -71,6 +71,13 @@ class Chat {
       'messages': FieldValue.arrayUnion([message.toJson()])
     });
   }
+
+  disableChat() {
+    FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatID)
+        .update({'disabledAt': Timestamp.now()});
+  }
 }
 
 class User {

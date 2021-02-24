@@ -124,7 +124,7 @@ class HomePage extends StatelessWidget {
                 user.addToSearchForChat();
                 return Navigator.push(
                   context,
-                  CustomPageRoute(
+                  PageTransition(
                     type: PageTransitionType.fade,
                     child: ChatPage(),
                   ),
@@ -139,11 +139,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-}
-
-class CustomPageRoute extends PageTransition {
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 500);
-
-  CustomPageRoute({child, type}) : super(child: child, type: type);
 }
