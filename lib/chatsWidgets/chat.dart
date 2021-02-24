@@ -89,7 +89,10 @@ class _ChatWidgetState extends State<ChatWidget> {
       appBar: AppBar(
         actions: [
           IconButton(
-              icon: Icon(Icons.close),
+              icon: Icon(
+                Icons.close,
+                color: Colors.red,
+              ),
               onPressed: () {
                 chat.disableChat();
                 Navigator.pop(context);

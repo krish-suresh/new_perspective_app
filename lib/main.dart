@@ -107,6 +107,7 @@ class HomePage extends StatelessWidget {
             ),
             OutlinedButton(
               child: SizedBox(
+                height: 50,
                 width: 50,
                 child: Hero(
                   tag: "eyeIcon",
