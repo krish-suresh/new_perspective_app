@@ -24,7 +24,7 @@ class RegisterPage extends StatelessWidget {
               ),
               EmailAuthButton(
                 text: 'Signup with Email',
-                // onPressed: () => print("TODO Show Form"),
+                onPressed: null,
               ),
               Spacer(
                 flex: 1,
