@@ -24,15 +24,33 @@ class ChatPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
+                  SizedBox(
+                    width: 200,
+                    child: Hero(
+                      tag: "eyeIcon",
+                      child: Expanded(
+                        child: FittedBox(
+                          child: Icon(
+                            Icons.remove_red_eye_outlined,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Text("Searching for chat..."),
+                  Container(
+                      padding: EdgeInsets.all(15),
+                      width: 50,
+                      height: 50,
+                      child: CircularProgressIndicator()),
                   OutlineButton(
                     onPressed: () {
                       user.removeFromSearchForChat();
                       Navigator.pop(context);
                     },
                     child: Text("End Search"),
-                  )
+                  ),
                 ],
               ),
             );
@@ -267,35 +285,5 @@ class MessageWidget extends StatelessWidget {
               children: [contentWidget],
             ),
     );
-  }
-}
-
-class JumpingDotsProgressIndicator extends StatefulWidget {
-  final int numberOfDots;
-  final double beginTweenValue = 0.0;
-  final double endTweenValue = 8.0;
-
-  JumpingDotsProgressIndicator({
-    this.numberOfDots = 3,
-  });
-
-  _JumpingDotsProgressIndicatorState createState() =>
-      _JumpingDotsProgressIndicatorState(
-        numberOfDots: this.numberOfDots,
-      );
-}
-
-class _JumpingDotsProgressIndicatorState
-    extends State<JumpingDotsProgressIndicator> with TickerProviderStateMixin {
-  int numberOfDots;
-  List<AnimationController> controllers = new List<AnimationController>();
-  List<Animation<double>> animations = new List<Animation<double>>();
-  List<Widget> _widgets = new List<Widget>();
-
-  _JumpingDotsProgressIndicatorState({
-    this.numberOfDots,
-  });
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

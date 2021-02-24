@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/chatsWidgets/chat.dart';
 import 'package:new_perspective_app/services/auth.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -104,17 +105,29 @@ class HomePage extends StatelessWidget {
             Spacer(
               flex: 1,
             ),
-            IconButton(
-              padding: new EdgeInsets.all(0.0),
-              icon: Icon(
-                Icons.remove_red_eye_outlined,
-                size: 50,
+            OutlinedButton(
+              child: SizedBox(
+                width: 50,
+                child: Hero(
+                  tag: "eyeIcon",
+                  child: Expanded(
+                    child: FittedBox(
+                      child: Icon(
+                        Icons.remove_red_eye_outlined,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
               ),
               onPressed: () {
                 user.addToSearchForChat();
                 return Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChatPage()),
+                  CustomPageRoute(
+                    type: PageTransitionType.fade,
+                    child: ChatPage(),
+                  ),
                 );
               },
             ),
@@ -126,4 +139,11 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+class CustomPageRoute extends PageTransition {
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 500);
+
+  CustomPageRoute({child, type}) : super(child: child, type: type);
 }
