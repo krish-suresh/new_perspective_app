@@ -4,15 +4,39 @@ import 'package:new_perspective_app/interfaces.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatelessWidget {
-  final String chatid;
-  const ChatPage(this.chatid, {Key key}) : super(key: key);
+  const ChatPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    print("ChatID: " + chatid);
+    User user = context.watch<User>();
+
     return Scaffold(
-      appBar: AppBar(),
-      body: ChatWidget(chatid),
+      // appBar: AppBar(),
+      body: StreamBuilder<String>(
+          stream: user.findChat(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+            } else if (snapshot.hasData && snapshot.data != null) {
+              print("ChatID: " + snapshot.data);
+              return ChatWidget(snapshot.data);
+            }
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  Text("Searching for chat..."),
+                  OutlineButton(
+                    onPressed: () {
+                      user.removeFromSearchForChat();
+                      Navigator.pop(context);
+                    },
+                    child: Text("End Search"),
+                  )
+                ],
+              ),
+            );
+          }),
     );
   }
 }

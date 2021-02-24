@@ -137,7 +137,32 @@ class User {
         .set({'registered': true}, SetOptions(merge: true));
   }
 
-  addToSearchForChat() {}
+  addToSearchForChat() {
+    FirebaseFirestore.instance
+        .collection('chatSearch')
+        .doc('searchingUsers')
+        .update({
+      'liveSearchingUsers': FieldValue.arrayUnion([uid])
+    });
+  }
 
-  removeFromSearchForChat() {}
+  removeFromSearchForChat() {
+    FirebaseFirestore.instance
+        .collection('chatSearch')
+        .doc('searchingUsers')
+        .update({
+      'liveSearchingUsers': FieldValue.arrayRemove([uid])
+    });
+  }
+
+  Stream<String> findChat() {
+    return FirebaseFirestore.instance
+        .collection("chats")
+        .where("disabledAt", isNull: true)
+        .where('users', arrayContains: uid)
+        .snapshots()
+        .map((event) {
+      return event.docs.first.id;
+    });
+  }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/chatsWidgets/chat.dart';
-import 'package:new_perspective_app/chatsWidgets/chatsearchpage.dart';
 import 'package:new_perspective_app/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -57,7 +56,6 @@ class HomePage extends StatelessWidget {
     User user = context.watch<User>();
     print("On Home Page");
     AuthService _authService = new AuthService();
-    Chat chat;
     bool userVerified = user.isVerified ?? false;
     bool userRegistered = user.registered ?? false;
     if (!userRegistered) {
@@ -112,10 +110,13 @@ class HomePage extends StatelessWidget {
                 Icons.remove_red_eye_outlined,
                 size: 50,
               ),
-              onPressed: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => ChatSearchPage()),
-              ),
+              onPressed: () {
+                user.addToSearchForChat();
+                return Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatPage()),
+                );
+              },
             ),
             Spacer(
               flex: 2,
