@@ -92,8 +92,13 @@ class AuthService {
         print("Not Signed In");
         return null;
       }
+      print("User Authed");
       DocumentSnapshot userDoc =
           await _db.collection('users').doc(user.uid).get();
+      if (userDoc.data() == null) {
+        print("Not registered");
+        return null;
+      }
       return User.fromJson(userDoc.data());
     });
   }

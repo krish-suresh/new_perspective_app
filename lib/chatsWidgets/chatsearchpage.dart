@@ -16,13 +16,19 @@ class ChatSearchPage extends StatelessWidget {
           future: api.searchForChat(user.uid),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.hasError) {
+              print(snapshot.error);
               return Center(child: Text("Something went wrong :("));
             } else if (snapshot.hasData) {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ChatPage(snapshot.data)),
+                  builder: (context) => ChatPage(snapshot.data),
+                ),
               );
+              Future.delayed(Duration.zero, () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => ChatPage(snapshot.data)));
+              });
             }
             return Center(
                 child: Column(

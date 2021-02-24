@@ -9,6 +9,7 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("ChatID: " + chatid);
     return Scaffold(
       appBar: AppBar(),
       body: ChatWidget(chatid),
@@ -30,7 +31,6 @@ class _ChatWidgetState extends State<ChatWidget> {
   bool usersLoaded = false;
   @override
   Widget build(BuildContext context) {
-    // Chat chat = context.watch<Chat>();
     TextEditingController messagingFieldController = TextEditingController();
     User user = context.watch<User>();
 

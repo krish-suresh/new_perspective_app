@@ -12,8 +12,9 @@ class CloudAPI {
   CloudAPI() {}
 
   Future<String> searchForChat(String uid) async {
-    HttpsCallableResult callableResult =
-        await functions.httpsCallable('searchForChat').call();
-    return callableResult.data;
+    HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('getNewChat');
+    final results = await callable();
+    return results.data;
   }
 }

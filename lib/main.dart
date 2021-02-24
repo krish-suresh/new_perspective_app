@@ -112,7 +112,7 @@ class HomePage extends StatelessWidget {
                 Icons.remove_red_eye_outlined,
                 size: 50,
               ),
-              onPressed: () => Navigator.push(
+              onPressed: () => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => ChatSearchPage()),
               ),

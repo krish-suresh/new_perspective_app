@@ -136,4 +136,8 @@ class User {
         .doc(uid)
         .set({'registered': true}, SetOptions(merge: true));
   }
+
+  addToSearchForChat() {}
+
+  removeFromSearchForChat() {}
 }
