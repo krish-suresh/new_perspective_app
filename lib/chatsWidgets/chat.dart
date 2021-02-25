@@ -17,6 +17,7 @@ class ChatPage extends StatelessWidget {
       body: StreamBuilder<String>(
           stream: user.findChat(),
           builder: (context, snapshot) {
+            print("Chat Data" + snapshot.toString());
             if (snapshot.hasError) {
             } else if (snapshot.hasData && snapshot.data != null) {
               print("ChatID: " + snapshot.data);
@@ -32,19 +33,10 @@ class ChatPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 200,
-                    child: Hero(
-                      tag: "eyeIcon",
-                      child: Expanded(
-                        child: FittedBox(
-                          child: Icon(
-                            Icons.remove_red_eye_outlined,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
+                  Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: Colors.black,
+                    size: 100,
                   ),
                   Text("Searching for chat..."),
                   Container(
@@ -52,7 +44,7 @@ class ChatPage extends StatelessWidget {
                       width: 50,
                       height: 50,
                       child: CircularProgressIndicator()),
-                  OutlineButton(
+                  OutlinedButton(
                     onPressed: () {
                       user.removeFromSearchForChat();
                       Navigator.pop(context);
@@ -91,7 +83,7 @@ class _ChatWidgetState extends State<ChatWidget> {
           IconButton(
               icon: Icon(
                 Icons.close,
-                color: Colors.red,
+                color: Colors.white,
               ),
               onPressed: () {
                 chat.disableChat();

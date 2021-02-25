@@ -105,33 +105,48 @@ class HomePage extends StatelessWidget {
             Spacer(
               flex: 1,
             ),
-            OutlinedButton(
-              child: SizedBox(
-                height: 50,
-                width: 50,
-                child: Hero(
-                  tag: "eyeIcon",
-                  child: Expanded(
-                    child: FittedBox(
-                      child: Icon(
-                        Icons.remove_red_eye_outlined,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
+            IconButton(
+                icon: Icon(
+                  Icons.remove_red_eye_outlined,
+                  color: Colors.black,
                 ),
-              ),
-              onPressed: () {
-                user.addToSearchForChat();
-                return Navigator.push(
-                  context,
-                  PageTransition(
-                    type: PageTransitionType.fade,
-                    child: ChatPage(),
-                  ),
-                );
-              },
-            ),
+                onPressed: () {
+                  user.addToSearchForChat();
+                  return Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.fade,
+                      child: ChatPage(),
+                    ),
+                  );
+                }),
+            // OutlinedButton(
+            //   child: SizedBox(
+            //     height: 50,
+            //     width: 50,
+            //     child: Hero(
+            //       tag: "eyeIcon",
+            //       child: Expanded(
+            //         child: FittedBox(
+            //           child: Icon(
+            //             Icons.remove_red_eye_outlined,
+            //             color: Colors.black,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            //   onPressed: () {
+            //     user.addToSearchForChat();
+            //     return Navigator.push(
+            //       context,
+            //       PageTransition(
+            //         type: PageTransitionType.fade,
+            //         child: ChatPage(),
+            //       ),
+            //     );
+            //   },
+            // ),
             Spacer(
               flex: 2,
             ),

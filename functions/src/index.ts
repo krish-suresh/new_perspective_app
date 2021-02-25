@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+/* eslint linebreak-style: ["error", "windows"]*/
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 admin.initializeApp();

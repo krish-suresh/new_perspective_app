@@ -163,13 +163,15 @@ class User {
   }
 
   Stream<String> findChat() {
+    print("Searching for chat: " + uid);
     return FirebaseFirestore.instance
         .collection("chats")
+        .where('users', arrayContainsAny: [uid])
         .where("disabledAt", isNull: true)
-        .where('users', arrayContains: uid)
-        .snapshots()
+        .snapshots(includeMetadataChanges: false)
         .map((event) {
-      return event.docs.first.id;
-    });
+          print("InSearch");
+          return event.docs.first.id;
+        });
   }
 }
