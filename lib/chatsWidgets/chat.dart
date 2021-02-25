@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:new_perspective_app/enums.dart';
 import 'package:new_perspective_app/interfaces.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -79,11 +81,18 @@ class _ChatWidgetState extends State<ChatWidget> {
   Widget build(BuildContext context) {
     TextEditingController messagingFieldController = TextEditingController();
     User user = context.watch<User>();
-
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
         actions: [
+          chat != null && chat.chatState == ChatState.LIVE
+              ? Center(
+                  child: CountdownTimer(
+                  endTime: chat.chatData['liveAt'].millisecondsSinceEpoch +
+                      chat.chatData['timeLimit'],
+                  onEnd: () => chat.disableChat(),
+                ))
+              : Container(),
           IconButton(
               icon: Icon(
                 Icons.close,

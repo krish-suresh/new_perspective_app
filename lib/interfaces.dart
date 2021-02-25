@@ -85,10 +85,10 @@ class Chat {
   }
 
   disableChat() {
-    FirebaseFirestore.instance
-        .collection('chats')
-        .doc(chatID)
-        .update({'disabledAt': Timestamp.now()});
+    FirebaseFirestore.instance.collection('chats').doc(chatID).update({
+      'disabledAt': Timestamp.now(),
+      'chatState': EnumToString.convertToString(ChatState.DISABLED)
+    });
   }
 }
 
