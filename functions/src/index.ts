@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+/* eslint linebreak-style: ["error", "windows"]*/
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 admin.initializeApp();
@@ -13,7 +14,8 @@ export const createChat = functions.firestore.document("/chatSearch/searchingUse
     try {
       const chat = {
         users: users,
-        createdAt: admin.database.ServerValue.TIMESTAMP,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        disabledAt: null,
         messages: [],
         usersTyping: {
           [uid0]: false,

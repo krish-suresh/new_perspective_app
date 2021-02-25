@@ -71,6 +71,13 @@ class Chat {
       'messages': FieldValue.arrayUnion([message.toJson()])
     });
   }
+
+  disableChat() {
+    FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatID)
+        .update({'disabledAt': Timestamp.now()});
+  }
 }
 
 class User {
@@ -137,7 +144,34 @@ class User {
         .set({'registered': true}, SetOptions(merge: true));
   }
 
-  addToSearchForChat() {}
+  addToSearchForChat() {
+    FirebaseFirestore.instance
+        .collection('chatSearch')
+        .doc('searchingUsers')
+        .update({
+      'liveSearchingUsers': FieldValue.arrayUnion([uid])
+    });
+  }
 
-  removeFromSearchForChat() {}
+  removeFromSearchForChat() {
+    FirebaseFirestore.instance
+        .collection('chatSearch')
+        .doc('searchingUsers')
+        .update({
+      'liveSearchingUsers': FieldValue.arrayRemove([uid])
+    });
+  }
+
+  Stream<String> findChat() {
+    print("Searching for chat: " + uid);
+    return FirebaseFirestore.instance
+        .collection("chats")
+        .where('users', arrayContainsAny: [uid])
+        .where("disabledAt", isNull: true)
+        .snapshots(includeMetadataChanges: false)
+        .map((event) {
+          print("InSearch");
+          return event.docs.first.id;
+        });
+  }
 }

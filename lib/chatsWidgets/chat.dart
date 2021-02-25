@@ -1,18 +1,60 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/interfaces.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 
 class ChatPage extends StatelessWidget {
-  final String chatid;
-  const ChatPage(this.chatid, {Key key}) : super(key: key);
+  const ChatPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    print("ChatID: " + chatid);
+    User user = context.watch<User>();
+
     return Scaffold(
-      appBar: AppBar(),
-      body: ChatWidget(chatid),
+      // appBar: AppBar(),
+      body: StreamBuilder<String>(
+          stream: user.findChat(),
+          builder: (context, snapshot) {
+            print("Chat Data" + snapshot.toString());
+            if (snapshot.hasError) {
+            } else if (snapshot.hasData && snapshot.data != null) {
+              print("ChatID: " + snapshot.data);
+              user.removeFromSearchForChat();
+              WidgetsBinding.instance.addPostFrameCallback((_) =>
+                  Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                          child: ChatWidget(snapshot.data),
+                          type: PageTransitionType.fade)));
+            }
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: Colors.black,
+                    size: 100,
+                  ),
+                  Text("Searching for chat..."),
+                  Container(
+                      padding: EdgeInsets.all(15),
+                      width: 50,
+                      height: 50,
+                      child: CircularProgressIndicator()),
+                  OutlinedButton(
+                    onPressed: () {
+                      user.removeFromSearchForChat();
+                      Navigator.pop(context);
+                    },
+                    child: Text("End Search"),
+                  ),
+                ],
+              ),
+            );
+          }),
     );
   }
 }
@@ -35,69 +77,84 @@ class _ChatWidgetState extends State<ChatWidget> {
     User user = context.watch<User>();
 
     double cWidth = MediaQuery.of(context).size.width * 0.95;
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      verticalDirection: VerticalDirection.up,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-              child: TextField(
-                onChanged: (value) {
-                  chat.currentMessageText = messagingFieldController.text;
-                  chat.updateUsersTyping(user.uid);
-                },
-                controller: messagingFieldController,
-                decoration: InputDecoration(
-                  hintText: "Enter a message",
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.close,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                chat.disableChat();
+                Navigator.pop(context);
+              })
+        ],
+      ),
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        verticalDirection: VerticalDirection.up,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: TextField(
+                  onChanged: (value) {
+                    chat.currentMessageText = messagingFieldController.text;
+                    chat.updateUsersTyping(user.uid);
+                  },
+                  controller: messagingFieldController,
+                  decoration: InputDecoration(
+                    hintText: "Enter a message",
+                  ),
                 ),
               ),
-            ),
-            Container(
-              child: IconButton(
-                onPressed: () {
-                  chat.sendMessage(
-                      content: messagingFieldController.text,
-                      contentType: 'text',
-                      userID: user.uid);
-                  messagingFieldController.clear();
-                  chat.currentMessageText = messagingFieldController.text;
-                  chat.updateUsersTyping(user.uid);
-                },
-                icon: Icon(Icons.arrow_upward),
+              Container(
+                child: IconButton(
+                  onPressed: () {
+                    chat.sendMessage(
+                        content: messagingFieldController.text,
+                        contentType: 'text',
+                        userID: user.uid);
+                    messagingFieldController.clear();
+                    chat.currentMessageText = messagingFieldController.text;
+                    chat.updateUsersTyping(user.uid);
+                  },
+                  icon: Icon(Icons.arrow_upward),
+                ),
               ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('chats')
-                .doc(widget.chatid)
-                .snapshots(),
-            builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.hasError) {
-                return Text('Something went wrong');
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text("Loading");
-              }
-              chat = Chat.fromSnapshot(snapshot.data);
-              // return ChatWidget(chat);
-              if (chat != null && !usersLoaded) {
-                loadUsers();
-              }
-              // usersLoaded
-              // ? UserTypingWidget(chat.usersTyping, users)
-              // : Container(),
-              return MessageList(chat, usersLoaded, users);
-            },
+            ],
           ),
-        ),
-      ],
+          Expanded(
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('chats')
+                  .doc(widget.chatid)
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Loading");
+                }
+                chat = Chat.fromSnapshot(snapshot.data);
+                // return ChatWidget(chat);
+                if (chat != null && !usersLoaded) {
+                  loadUsers();
+                }
+                // usersLoaded
+                // ? UserTypingWidget(chat.usersTyping, users)
+                // : Container(),
+                return MessageList(chat, usersLoaded, users);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -243,35 +300,5 @@ class MessageWidget extends StatelessWidget {
               children: [contentWidget],
             ),
     );
-  }
-}
-
-class JumpingDotsProgressIndicator extends StatefulWidget {
-  final int numberOfDots;
-  final double beginTweenValue = 0.0;
-  final double endTweenValue = 8.0;
-
-  JumpingDotsProgressIndicator({
-    this.numberOfDots = 3,
-  });
-
-  _JumpingDotsProgressIndicatorState createState() =>
-      _JumpingDotsProgressIndicatorState(
-        numberOfDots: this.numberOfDots,
-      );
-}
-
-class _JumpingDotsProgressIndicatorState
-    extends State<JumpingDotsProgressIndicator> with TickerProviderStateMixin {
-  int numberOfDots;
-  List<AnimationController> controllers = new List<AnimationController>();
-  List<Animation<double>> animations = new List<Animation<double>>();
-  List<Widget> _widgets = new List<Widget>();
-
-  _JumpingDotsProgressIndicatorState({
-    this.numberOfDots,
-  });
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
