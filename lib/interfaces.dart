@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'enums.dart';
 
 class Message {
   final String contentType;
@@ -28,25 +31,34 @@ class Message {
 }
 
 class Chat {
-  final DateTime createdAt;
   final List<String> userIDs;
   final String chatID;
-  List<Message> messages;
-  Map<String, bool> usersTyping;
+  final List<Message> messages;
+  final Map<String, bool> usersTyping;
   String currentMessageText = "";
-  Chat({this.createdAt, this.userIDs, this.chatID});
+  final Map<String, dynamic> chatData;
+  final ChatState chatState;
+  Chat(
+      {this.messages,
+      this.usersTyping,
+      this.chatData,
+      this.chatState,
+      this.userIDs,
+      this.chatID});
 
   factory Chat.fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> chatData = snapshot.data();
     Chat chat = Chat(
       chatID: snapshot.id,
       userIDs: List.from(chatData['users']),
-      createdAt: chatData['createdAt'].toDate(),
+      messages: List<Message>.from(
+          chatData['messages'].map((data) => Message.fromJSON(data))),
+      usersTyping: Map<String, bool>.from(chatData['usersTyping']),
+      chatData: chatData,
+      chatState:
+          EnumToString.fromString(ChatState.values, chatData['chatState']),
     );
-    chat.messages = List<Message>.from(
-        chatData['messages'].map((data) => Message.fromJSON(data)));
     chat.messages.sort((a, b) => a.sentAt.isBefore(b.sentAt) ? 1 : -1);
-    chat.usersTyping = Map<String, bool>.from(chatData['usersTyping']);
     return chat;
   }
 
@@ -138,10 +150,9 @@ class User {
   }
 
   registerUser(String text) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .set({'registered': true}, SetOptions(merge: true));
+    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'registered': true,
+    }, SetOptions(merge: true));
   }
 
   addToSearchForChat() {

@@ -5,6 +5,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 
+import 'messages.dart';
+
 class ChatPage extends StatelessWidget {
   const ChatPage({Key key}) : super(key: key);
 
@@ -60,6 +62,7 @@ class ChatPage extends StatelessWidget {
 }
 
 class ChatWidget extends StatefulWidget {
+  // TODO Make stateless
   final String chatid;
   ChatWidget(this.chatid, {Key key}) : super(key: key);
 
@@ -71,14 +74,15 @@ class _ChatWidgetState extends State<ChatWidget> {
   Chat chat;
   List<User> users = [];
   bool usersLoaded = false;
+  bool hasMessage = false;
   @override
   Widget build(BuildContext context) {
     TextEditingController messagingFieldController = TextEditingController();
     User user = context.watch<User>();
 
-    double cWidth = MediaQuery.of(context).size.width * 0.95;
     return Scaffold(
       appBar: AppBar(
+        leading: Container(),
         actions: [
           IconButton(
               icon: Icon(
@@ -95,37 +99,53 @@ class _ChatWidgetState extends State<ChatWidget> {
         mainAxisSize: MainAxisSize.max,
         verticalDirection: VerticalDirection.up,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                child: TextField(
-                  onChanged: (value) {
-                    chat.currentMessageText = messagingFieldController.text;
-                    chat.updateUsersTyping(user.uid);
-                  },
-                  controller: messagingFieldController,
-                  decoration: InputDecoration(
-                    hintText: "Enter a message",
+          StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Spacer(
+                  flex: 1,
+                ),
+                Expanded(
+                  flex: 50,
+                  child: TextField(
+                    autofocus: true,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    onChanged: (value) {
+                      chat.currentMessageText = messagingFieldController.text;
+                      chat.updateUsersTyping(user.uid);
+                      setState(() {
+                        hasMessage = messagingFieldController.text != "";
+                      });
+                    },
+                    controller: messagingFieldController,
+                    decoration: InputDecoration(
+                      hintText: "Share some insight",
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                child: IconButton(
-                  onPressed: () {
-                    chat.sendMessage(
-                        content: messagingFieldController.text,
-                        contentType: 'text',
-                        userID: user.uid);
-                    messagingFieldController.clear();
-                    chat.currentMessageText = messagingFieldController.text;
-                    chat.updateUsersTyping(user.uid);
-                  },
-                  icon: Icon(Icons.arrow_upward),
+                Container(
+                  child: IconButton(
+                    onPressed: hasMessage
+                        ? () {
+                            chat.sendMessage(
+                                content: messagingFieldController.text,
+                                contentType: 'text',
+                                userID: user.uid);
+                            messagingFieldController.clear();
+                            chat.currentMessageText =
+                                messagingFieldController.text;
+                            chat.updateUsersTyping(user.uid);
+                          }
+                        : null,
+                    icon: Icon(Icons.arrow_upward),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
           Expanded(
             child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
@@ -197,108 +217,5 @@ class UserTypingWidget extends StatelessWidget {
             ),
           )
         : Container();
-  }
-}
-
-class JumpingDot extends AnimatedWidget {
-  JumpingDot({Key key, Animation<double> animation})
-      : super(key: key, listenable: animation);
-
-  Widget build(BuildContext context) {
-    final Animation<double> animation = listenable;
-    return Container(
-      height: animation.value,
-      child: Text('.'),
-    );
-  }
-}
-
-class MessageList extends StatelessWidget {
-  final Chat chat;
-  final bool usersLoaded;
-  final List<User> users;
-  const MessageList(this.chat, this.usersLoaded, this.users, {Key key})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return chat.messages != null
-        ? Container(
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              reverse: true,
-              itemCount: chat.messages.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return usersLoaded
-                      ? UserTypingWidget(chat.usersTyping, users)
-                      : Container();
-                }
-                return ListTile(
-                  title: MessageWidget(message: chat.messages[index - 1]),
-                );
-              },
-            ),
-          )
-        : Text('Messages Loading');
-  }
-}
-
-class MessageWidget extends StatelessWidget {
-  final Message message;
-  const MessageWidget({this.message, Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    User user = context.watch<User>();
-    bool sentByMe = user.uid == message.userID;
-    Widget contentWidget = Text("");
-    switch (message.contentType) {
-      case "text":
-        contentWidget = Container(
-          width: MediaQuery.of(context).size.width * 0.5,
-          margin: EdgeInsets.all(2),
-          padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-          decoration: BoxDecoration(
-            color: sentByMe ? Colors.blue : Colors.green,
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
-          child: Text(
-            message.content,
-          ),
-        );
-        break;
-      default:
-    }
-    double cWidth = MediaQuery.of(context).size.width * 0.9;
-
-    return Container(
-      // padding: EdgeInsets.all(16.0),
-      width: cWidth,
-      child: sentByMe
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                contentWidget,
-                user.photoURL != null
-                    ? Container(
-                        width: 25,
-                        height: 25,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: NetworkImage(user.photoURL),
-                          ),
-                        ),
-                      )
-                    : Container(),
-              ],
-            )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [contentWidget],
-            ),
-    );
   }
 }

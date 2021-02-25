@@ -20,6 +20,10 @@ class UserInfoFormPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
               child: TextField(
                 controller: demNumberController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Demographic Number',
+                ),
               ),
             ),
             OutlinedButton(

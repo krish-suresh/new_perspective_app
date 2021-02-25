@@ -88,6 +88,7 @@ class AuthService {
 
   Stream<User> authStateChanges() {
     return _auth.authStateChanges().asyncMap((user) async {
+      print("Auth State Changed");
       if (user == null) {
         print("Not Signed In");
         return null;
@@ -138,7 +139,9 @@ class AuthService {
       'lastSeen': Timestamp.now(),
       'createdAt': Timestamp.now(),
       'registered': false,
-      'isVerified': true
+      'isVerified': true,
+      'photoURL':
+          "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png", // TODO THIS IS HARDCODED FOR NOW
     });
     print("Signing in guest: " + user.uid);
     await createUserProfile(user);

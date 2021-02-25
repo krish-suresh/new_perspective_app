@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   auth_buttons: ^0.0.6
   page_transition: "^1.1.7+6"
+  enum_to_string: ^1.0.14
 dev_dependencies:
   flutter_test:
     sdk: flutter
