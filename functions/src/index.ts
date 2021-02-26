@@ -16,6 +16,13 @@ export const createChat = functions.firestore.document("/chatSearch/searchingUse
         users: users,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         disabledAt: null,
+        liveAt: null,
+        timeLimit: 300000,
+        usersStatus: {
+          [uid0]: "NORESPONSE",
+          [uid1]: "NORESPONSE",
+        },
+        chatState: "CREATED",
         messages: [],
         usersTyping: {
           [uid0]: false,
