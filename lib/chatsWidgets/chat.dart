@@ -134,9 +134,8 @@ class ChatWidget extends StatelessWidget {
                   break;
                 case ChatUserStatus.DECLINED:
                 case ChatUserStatus.DISCONNECTED:
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Your Chat Has Closed.")));
-                  Navigator.pop(context);
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //     SnackBar(content: Text("Your Chat Has Closed.")));
                   // WidgetsBinding.instance
                   //     .addPostFrameCallback((_) => Navigator.pushReplacement(
                   //           context,
@@ -178,14 +177,14 @@ class ChatWidget extends StatelessWidget {
                           ElevatedButton(
                             onPressed: () {
                               chat.userDecline(user.uid);
-                              WidgetsBinding.instance.addPostFrameCallback(
-                                  (_) => Navigator.pushReplacement(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType.fade,
-                                          child: ChatWaitingPage(),
-                                        ),
-                                      ));
+                              // WidgetsBinding.instance.addPostFrameCallback(
+                              //     (_) => Navigator.pushReplacement(
+                              //           context,
+                              //           PageTransition(
+                              //             type: PageTransitionType.fade,
+                              //             child: ChatWaitingPage(),
+                              //           ),
+                              //         ));
                             },
                             child: Text("Decline"),
                             style: ElevatedButton.styleFrom(
@@ -218,16 +217,15 @@ class ChatWidget extends StatelessWidget {
               // TODO: Handle this case.
               break;
             case ChatState.COMPLETED:
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Your Chat Has Been Completed.")));
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(content: Text("Your Chat Has Been Completed.")));
               Navigator.pop(context);
               return Container();
               break;
             case ChatState.DELETED:
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Your Chat Has Been Closed.")));
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(content: Text("Your Chat Has Been Closed.")));
               Navigator.pop(context);
-              return Container();
               break;
           }
           return Scaffold(
