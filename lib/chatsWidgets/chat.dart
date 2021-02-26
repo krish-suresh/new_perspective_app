@@ -304,6 +304,16 @@ class ChatWidget extends StatelessWidget {
                   );
                 }),
                 Expanded(child: MessageList(chat, users)),
+                Container(
+                  child: Row(
+                    children: [
+                      Text("Discussion Question: ${chat.question['text']}"),
+                      IconButton(
+                          icon: Icon(Icons.arrow_right),
+                          onPressed: () => chat.newQuestion())
+                    ],
+                  ),
+                ),
               ],
             ),
           );

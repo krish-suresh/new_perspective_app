@@ -39,33 +39,34 @@ class Chat {
   final Map<String, dynamic> chatData;
   final ChatState chatState;
   final Map<String, ChatUserStatus> usersStatus;
-  Chat({
-    this.messages,
-    this.usersTyping,
-    this.chatData,
-    this.chatState,
-    this.userIDs,
-    this.chatID,
-    this.usersStatus,
-  });
+  final Map<String, dynamic> question;
+  Chat(
+      {this.messages,
+      this.usersTyping,
+      this.chatData,
+      this.chatState,
+      this.userIDs,
+      this.chatID,
+      this.usersStatus,
+      this.question});
 
   factory Chat.fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> chatData = snapshot.data();
     Chat chat = Chat(
-      chatID: snapshot.id,
-      userIDs: List.from(chatData['users']),
-      messages: List<Message>.from(
-          chatData['messages'].map((data) => Message.fromJSON(data))),
-      usersTyping: Map<String, bool>.from(chatData['usersTyping']),
-      chatData: chatData,
-      chatState: EnumToString.fromString(
-        ChatState.values,
-        chatData['chatState'],
-      ),
-      usersStatus: Map<String, String>.from(chatData['usersStatus']).map((key,
-              value) =>
-          MapEntry(key, EnumToString.fromString(ChatUserStatus.values, value))),
-    );
+        chatID: snapshot.id,
+        userIDs: List.from(chatData['users']),
+        messages: List<Message>.from(
+            chatData['messages'].map((data) => Message.fromJSON(data))),
+        usersTyping: Map<String, bool>.from(chatData['usersTyping']),
+        chatData: chatData,
+        chatState: EnumToString.fromString(
+          ChatState.values,
+          chatData['chatState'],
+        ),
+        usersStatus: Map<String, String>.from(chatData['usersStatus']).map(
+            (key, value) => MapEntry(
+                key, EnumToString.fromString(ChatUserStatus.values, value))),
+        question: chatData['question']);
     chat.messages.sort((a, b) => a.sentAt.isBefore(b.sentAt) ? 1 : -1);
     return chat;
   }
@@ -132,6 +133,24 @@ class Chat {
     FirebaseFirestore.instance.collection('chats').doc(chatID).update({
       'completedAt': Timestamp.now(),
       'chatState': EnumToString.convertToString(ChatState.COMPLETED)
+    });
+  }
+
+  newQuestion() {
+    print("New Question");
+    FirebaseFirestore.instance
+        .collection('questions')
+        .where('id', isNotEqualTo: question['id'])
+        .get()
+        .then((value) {
+      if (value.docs.length == 0) {
+        return;
+      }
+
+      Map<String, dynamic> data = value.docs.first.data();
+      FirebaseFirestore.instance.collection('chats').doc(chatID).update({
+        'question': {'id': data['id'], 'text': data['question']}
+      });
     });
   }
 }
