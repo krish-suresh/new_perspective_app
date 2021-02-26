@@ -267,4 +267,13 @@ class User {
         .map((event) =>
             event.data() != null ? User.fromJson(event.data()) : null);
   }
+
+  Future<List<Chat>> getChatHistory(String uid) async {
+    return FirebaseFirestore.instance
+        .collection("chats")
+        .where('users', arrayContains: uid)
+        .where('chatState', isEqualTo: ChatState.COMPLETED.name)
+        .get()
+        .then((value) => value.docs.map((e) => Chat.fromSnapshot(e)).toList());
+  }
 }

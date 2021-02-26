@@ -103,17 +103,23 @@ class HomePage extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: Center(child: Text("CHAT HISTORY COMING SOON")),
+              child: Center(child: ChatHistoryList()),
               flex: 25,
             ),
-            Text("Find a new perspective"),
             Spacer(
               flex: 1,
             ),
-            IconButton(
-                icon: Icon(
-                  Icons.remove_red_eye_outlined,
-                  color: Colors.black,
+            ElevatedButton.icon(
+                label: Text("Find a new perspective"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green.shade300,
+                ),
+                icon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: Colors.white,
+                  ),
                 ),
                 onPressed: () {
                   user.addToSearchForChat();
