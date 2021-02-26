@@ -92,10 +92,10 @@ class Chat {
     });
   }
 
-  disableChat() {
+  deleteChat() {
     FirebaseFirestore.instance.collection('chats').doc(chatID).update({
-      'disabledAt': Timestamp.now(),
-      'chatState': EnumToString.convertToString(ChatState.DISABLED)
+      'deletedAt': Timestamp.now(),
+      'chatState': EnumToString.convertToString(ChatState.DELETED)
     });
   }
 
@@ -104,6 +104,11 @@ class Chat {
     FirebaseFirestore.instance.collection('chats').doc(chatID).update({
       'usersStatus': usersStatus.map(
           (key, value) => MapEntry(key, EnumToString.convertToString(value)))
+    }).then((value) {
+      FirebaseFirestore.instance
+          .collection('chats')
+          .doc(chatID)
+          .update({'chatState': 'DELETED'});
     });
   }
 
@@ -118,8 +123,15 @@ class Chat {
         FirebaseFirestore.instance
             .collection('chats')
             .doc(chatID)
-            .update({'chatState': 'LIVE'});
+            .update({'chatState': 'LIVE', 'liveAt': Timestamp.now()});
       }
+    });
+  }
+
+  completeChat() {
+    FirebaseFirestore.instance.collection('chats').doc(chatID).update({
+      'completedAt': Timestamp.now(),
+      'chatState': EnumToString.convertToString(ChatState.COMPLETED)
     });
   }
 }
@@ -210,10 +222,13 @@ class User {
     return FirebaseFirestore.instance
         .collection("chats")
         .where('users', arrayContainsAny: [uid])
-        .where("disabledAt", isNull: true)
+        .where("chatState", isEqualTo: "CREATED")
         .snapshots(includeMetadataChanges: false)
         .map((event) {
-          print("InSearch");
+          print("In Search");
+          if (event.docs == null || event.docs.length == 0) {
+            return null;
+          }
           return event.docs.first.id;
         });
   }

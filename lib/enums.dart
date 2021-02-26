@@ -1,7 +1,7 @@
 enum ChatState {
   CREATED,
   LIVE,
-  DISABLED,
+  COMPLETED,
   DELETED,
 }
 

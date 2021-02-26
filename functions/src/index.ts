@@ -15,7 +15,8 @@ export const createChat = functions.firestore.document("/chatSearch/searchingUse
       const chat = {
         users: users,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        disabledAt: null,
+        deletedAt: null,
+        completedAt: null,
         liveAt: null,
         timeLimit: 300000,
         usersStatus: {
