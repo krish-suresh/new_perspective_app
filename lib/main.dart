@@ -5,7 +5,7 @@ import 'package:new_perspective_app/services/auth.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'authenticationWidgets/signin.dart';
 import 'authenticationWidgets/useremailnotverifiedpage.dart';
 import 'authenticationWidgets/userinfoformpage.dart';
@@ -36,9 +36,11 @@ class MyApp extends StatelessWidget {
     AuthService authService = new AuthService();
     return MultiProvider(
       providers: [
-        StreamProvider<User>.value(
-          value: authService.authStateChanges(),
+        StreamProvider<bool>.value(
+          value: authService.userSignedIn() ?? false,
         ),
+        StreamProvider.value(
+            value: User.getStream(FirebaseAuth.instance.currentUser.uid))
       ],
       child: MaterialApp(
         title: 'New Perspective App',

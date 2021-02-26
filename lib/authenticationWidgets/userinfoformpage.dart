@@ -42,7 +42,15 @@ class UserInfoFormPage extends StatelessWidget {
             ),
             OutlinedButton(
               child: Text("Submit"),
-              onPressed: () => user.registerUser(demNumberController.text),
+              onPressed: () {
+                //   user.displayName = displayNameController.text;
+                //   user.photoURL = photoURLCheckbox
+                //       ? "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png"
+                //       : user.photoURL; // TODO make this dynamic
+                //   user.userDemographicData = collectDemographicData();
+                user.registered = true;
+                user.updateUser();
+              },
             ),
             Spacer(),
           ],
@@ -50,4 +58,6 @@ class UserInfoFormPage extends StatelessWidget {
       ),
     );
   }
+
+  Map<String, dynamic> collectDemographicData() {}
 }

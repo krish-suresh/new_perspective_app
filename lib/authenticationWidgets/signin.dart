@@ -12,42 +12,43 @@ class SignInRegisterPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User user = context.watch<User>();
+    bool userSignedIn = context.watch<bool>() ?? false;
+    print(userSignedIn);
     return Container(
-        height: 100,
-        child: user == null
-            ? Scaffold(
-                body: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(
-                      child: Center(
-                          child: Text(
-                        "New Perspective",
-                        style: Theme.of(context).textTheme.headline6,
-                      )),
-                      flex: 3,
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: ScrollConfiguration(
-                        behavior: SigninSignUpScrollBehavior(),
-                        child: PageView(
-                          children: [SignInPage(), RegisterPage()],
-                        ),
+      height: 100,
+      child: !userSignedIn
+          ? Scaffold(
+              body: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Center(
+                        child: Text(
+                      "New Perspective",
+                      style: Theme.of(context).textTheme.headline6,
+                    )),
+                    flex: 3,
+                  ),
+                  Expanded(
+                    flex: 8,
+                    child: ScrollConfiguration(
+                      behavior: SigninSignUpScrollBehavior(),
+                      child: PageView(
+                        children: [SignInPage(), RegisterPage()],
                       ),
                     ),
-                  ],
-                ),
-              )
-            : MultiProvider(
-                providers: [
-                  StreamProvider<User>.value(
-                    value: User.getStream(user.uid),
                   ),
                 ],
-                child: HomePage(),
-              ));
+              ),
+            )
+          : HomePage(),
+    );
+// MultiProvider(
+//                 providers: [
+
+//                 ],
+//                 child: HomePage(),
+//               ));
   }
 }
 
@@ -56,39 +57,58 @@ class SignInPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool showNotRegError = false;
     AuthService _authService = new AuthService();
     return Scaffold(
       body: Container(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Spacer(
-                flex: 7,
-              ),
-              EmailAuthButton(
-                onPressed: null,
-              ),
-              Spacer(
-                flex: 1,
-              ),
-              GoogleAuthButton(
-                onPressed: () => _authService.googleSignIn(),
-              ),
-              Spacer(
-                flex: 1,
-              ),
-              AbsorbPointer(
-                child: MaterialButton(
-                  child: Text("Swipe to register >"),
-                  onPressed: () {},
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            _authService.signOut();
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Spacer(
+                  flex: 7,
                 ),
-              ),
-              Spacer(
-                flex: 7,
-              )
-            ],
-          ),
+                Visibility(
+                    visible: showNotRegError,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Please register before signing in.",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    )),
+                EmailAuthButton(
+                  onPressed: null,
+                ),
+                Spacer(
+                  flex: 1,
+                ),
+                GoogleAuthButton(
+                  onPressed: () async {
+                    bool temp = await _authService.googleSignIn() == null;
+                    setState(() {
+                      showNotRegError = temp;
+                    });
+                  },
+                ),
+                Spacer(
+                  flex: 1,
+                ),
+                AbsorbPointer(
+                  child: MaterialButton(
+                    child: Text("Swipe to register >"),
+                    onPressed: () {},
+                  ),
+                ),
+                Spacer(
+                  flex: 7,
+                )
+              ],
+            );
+          }),
         ),
       ),
     );

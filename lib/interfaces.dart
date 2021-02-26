@@ -175,7 +175,8 @@ class User {
       this.email,
       this.createdAt,
       this.registered,
-      this.isVerified});
+      this.isVerified,
+      this.userDemographicData});
   factory User.fromJson(Map<String, dynamic> userData) {
     User user = User(
       userData,
@@ -187,6 +188,8 @@ class User {
       createdAt: userData['createdAt'],
       registered: userData['registered'],
       isVerified: userData['isVerified'],
+      userDemographicData:
+          Map<String, dynamic>.from(userData['userDemographicData'] ?? {}),
     );
     user.uid = userData['uid'];
     user.displayName = userData['displayName'];
@@ -196,7 +199,7 @@ class User {
   static Future<User> getUserFromID(String uid) async {
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    return userDoc != null ? User.fromJson(userDoc.data()) : null;
+    return userDoc.exists ? User.fromJson(userDoc.data()) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -208,14 +211,16 @@ class User {
       'createdAt': createdAt,
       'lastSeen': lastSeen,
       'registered': registered,
-      'isVerified': isVerified
+      'isVerified': isVerified,
+      'userDemographicData': userDemographicData
     };
   }
 
-  registerUser(String text) async {
-    await FirebaseFirestore.instance.collection('users').doc(uid).set({
-      'registered': true,
-    }, SetOptions(merge: true));
+  updateUser() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .set(this.toJson(), SetOptions(merge: true));
   }
 
   addToSearchForChat() {
