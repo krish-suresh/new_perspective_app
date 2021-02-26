@@ -279,7 +279,7 @@ class ChatWidget extends StatelessWidget {
                           },
                           controller: messagingFieldController,
                           decoration: InputDecoration(
-                            hintText: "Share some insight",
+                            hintText: "Share some insight...",
                           ),
                         ),
                       ),
