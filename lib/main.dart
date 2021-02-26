@@ -56,6 +56,11 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     User user = context.watch<User>();
     print("On Home Page");
+    if (user == null) {
+      return Scaffold(
+        body: CircularProgressIndicator(),
+      );
+    }
     AuthService _authService = new AuthService();
     bool userVerified = user.isVerified ?? false;
     bool userRegistered = user.registered ?? false;

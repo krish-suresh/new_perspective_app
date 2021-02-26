@@ -11,11 +11,25 @@ class UserInfoFormPage extends StatelessWidget {
     User user = context.watch<User>();
 
     TextEditingController demNumberController = TextEditingController();
+
+    Widget profilePhoto = user.photoURL != null
+        ? ClipOval(
+            child: Image.network(
+              user.photoURL,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          )
+        : Container();
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Spacer(),
+            profilePhoto,
+            Spacer(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
               child: TextField(
@@ -27,9 +41,10 @@ class UserInfoFormPage extends StatelessWidget {
               ),
             ),
             OutlinedButton(
-              child: Text("Press this button to register"),
+              child: Text("Submit"),
               onPressed: () => user.registerUser(demNumberController.text),
             ),
+            Spacer(),
           ],
         ),
       ),

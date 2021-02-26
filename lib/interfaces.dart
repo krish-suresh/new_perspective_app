@@ -258,4 +258,13 @@ class User {
     List<String> userIDs = List.from(snapshot.data()['users']);
     return Future.wait(userIDs.map((e) async => await User.getUserFromID(e)));
   }
+
+  static Stream<User> getStream(String uid) {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .snapshots()
+        .map((event) =>
+            event.data() != null ? User.fromJson(event.data()) : null);
+  }
 }

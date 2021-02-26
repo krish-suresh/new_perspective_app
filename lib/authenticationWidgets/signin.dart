@@ -14,34 +14,40 @@ class SignInRegisterPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     User user = context.watch<User>();
     return Container(
-      height: 100,
-      child: user == null
-          ? Scaffold(
-              body: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Center(
-                        child: Text(
-                      "New Perspective",
-                      style: Theme.of(context).textTheme.headline6,
-                    )),
-                    flex: 3,
-                  ),
-                  Expanded(
-                    flex: 8,
-                    child: ScrollConfiguration(
-                      behavior: SigninSignUpScrollBehavior(),
-                      child: PageView(
-                        children: [SignInPage(), RegisterPage()],
+        height: 100,
+        child: user == null
+            ? Scaffold(
+                body: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Center(
+                          child: Text(
+                        "New Perspective",
+                        style: Theme.of(context).textTheme.headline6,
+                      )),
+                      flex: 3,
+                    ),
+                    Expanded(
+                      flex: 8,
+                      child: ScrollConfiguration(
+                        behavior: SigninSignUpScrollBehavior(),
+                        child: PageView(
+                          children: [SignInPage(), RegisterPage()],
+                        ),
                       ),
                     ),
+                  ],
+                ),
+              )
+            : MultiProvider(
+                providers: [
+                  StreamProvider<User>.value(
+                    value: User.getStream(user.uid),
                   ),
                 ],
-              ),
-            )
-          : HomePage(),
-    );
+                child: HomePage(),
+              ));
   }
 }
 
