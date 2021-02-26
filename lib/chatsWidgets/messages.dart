@@ -6,14 +6,12 @@ import 'chat.dart';
 
 class MessageList extends StatelessWidget {
   final Chat chat;
-  final bool usersLoaded;
   final List<User> users;
-  const MessageList(this.chat, this.usersLoaded, this.users, {Key key})
-      : super(key: key);
+  const MessageList(this.chat, this.users, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return chat.messages != null && usersLoaded
+    return chat.messages != null
         ? Container(
             child: ListView.builder(
               scrollDirection: Axis.vertical,
@@ -21,9 +19,7 @@ class MessageList extends StatelessWidget {
               itemCount: chat.messages.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return usersLoaded
-                      ? UserTypingWidget(chat.usersTyping, users)
-                      : Container();
+                  return UserTypingWidget(chat.usersTyping, users);
                 }
                 return ListTile(
                   title: MessageWidget(
@@ -65,7 +61,7 @@ class MessageWidget extends StatelessWidget {
             margin: EdgeInsets.all(1),
             padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
             decoration: BoxDecoration(
-              color: sentByMe ? Colors.grey.shade400 : Colors.grey.shade500,
+              color: sentByMe ? Colors.grey.shade300 : Colors.grey.shade400,
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
             child: Text(

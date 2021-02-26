@@ -38,13 +38,16 @@ class Chat {
   String currentMessageText = "";
   final Map<String, dynamic> chatData;
   final ChatState chatState;
-  Chat(
-      {this.messages,
-      this.usersTyping,
-      this.chatData,
-      this.chatState,
-      this.userIDs,
-      this.chatID});
+  final Map<String, ChatUserStatus> usersStatus;
+  Chat({
+    this.messages,
+    this.usersTyping,
+    this.chatData,
+    this.chatState,
+    this.userIDs,
+    this.chatID,
+    this.usersStatus,
+  });
 
   factory Chat.fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> chatData = snapshot.data();
@@ -55,8 +58,13 @@ class Chat {
           chatData['messages'].map((data) => Message.fromJSON(data))),
       usersTyping: Map<String, bool>.from(chatData['usersTyping']),
       chatData: chatData,
-      chatState:
-          EnumToString.fromString(ChatState.values, chatData['chatState']),
+      chatState: EnumToString.fromString(
+        ChatState.values,
+        chatData['chatState'],
+      ),
+      usersStatus: Map<String, String>.from(chatData['usersStatus']).map((key,
+              value) =>
+          MapEntry(key, EnumToString.fromString(ChatUserStatus.values, value))),
     );
     chat.messages.sort((a, b) => a.sentAt.isBefore(b.sentAt) ? 1 : -1);
     return chat;
@@ -88,6 +96,30 @@ class Chat {
     FirebaseFirestore.instance.collection('chats').doc(chatID).update({
       'disabledAt': Timestamp.now(),
       'chatState': EnumToString.convertToString(ChatState.DISABLED)
+    });
+  }
+
+  void userDecline(String uid) {
+    usersStatus[uid] = ChatUserStatus.DECLINED;
+    FirebaseFirestore.instance.collection('chats').doc(chatID).update({
+      'usersStatus': usersStatus.map(
+          (key, value) => MapEntry(key, EnumToString.convertToString(value)))
+    });
+  }
+
+  void userAccept(String uid) {
+    usersStatus[uid] = ChatUserStatus.ACCEPTED;
+    FirebaseFirestore.instance.collection('chats').doc(chatID).update({
+      'usersStatus': usersStatus.map(
+          (key, value) => MapEntry(key, EnumToString.convertToString(value)))
+    }).then((value) {
+      if (usersStatus.values
+          .every((element) => element == ChatUserStatus.ACCEPTED)) {
+        FirebaseFirestore.instance
+            .collection('chats')
+            .doc(chatID)
+            .update({'chatState': 'LIVE'});
+      }
     });
   }
 }
@@ -184,5 +216,12 @@ class User {
           print("InSearch");
           return event.docs.first.id;
         });
+  }
+
+  static Future<List<User>> getUsersFromChat(String chatID) async {
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection("chats").doc(chatID).get();
+    List<String> userIDs = List.from(snapshot.data()['users']);
+    return Future.wait(userIDs.map((e) async => await User.getUserFromID(e)));
   }
 }

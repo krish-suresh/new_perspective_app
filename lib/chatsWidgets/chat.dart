@@ -9,13 +9,37 @@ import 'package:flutter/foundation.dart';
 
 import 'messages.dart';
 
-class ChatPage extends StatelessWidget {
-  const ChatPage({Key key}) : super(key: key);
+class ChatWaitingPage extends StatelessWidget {
+  const ChatWaitingPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     User user = context.watch<User>();
-
+    Widget searchingContent = Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.remove_red_eye_outlined,
+            color: Colors.black,
+            size: 100,
+          ),
+          Text("Searching for chat..."),
+          Container(
+              padding: EdgeInsets.all(15),
+              width: 50,
+              height: 50,
+              child: CircularProgressIndicator()),
+          OutlinedButton(
+            onPressed: () {
+              user.removeFromSearchForChat();
+              Navigator.pop(context);
+            },
+            child: Text("End Search"),
+          ),
+        ],
+      ),
+    );
     return Scaffold(
       // appBar: AppBar(),
       body: StreamBuilder<String>(
@@ -24,177 +48,258 @@ class ChatPage extends StatelessWidget {
             print("Chat Data" + snapshot.toString());
             if (snapshot.hasError) {
             } else if (snapshot.hasData && snapshot.data != null) {
+              String chatID = snapshot.data;
               print("ChatID: " + snapshot.data);
               user.removeFromSearchForChat();
-              WidgetsBinding.instance.addPostFrameCallback((_) =>
-                  Navigator.pushReplacement(
-                      context,
-                      PageTransition(
-                          child: ChatWidget(snapshot.data),
-                          type: PageTransitionType.fade)));
+              return FutureBuilder<List<User>>(
+                  future: User.getUsersFromChat(chatID),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<User>> snapshot) {
+                    if (snapshot.hasData) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) =>
+                          Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                  child:
+                                      ChatWidget(chatID, users: snapshot.data),
+                                  type: PageTransitionType.fade)));
+                    }
+                    return searchingContent;
+                  });
             }
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.remove_red_eye_outlined,
-                    color: Colors.black,
-                    size: 100,
-                  ),
-                  Text("Searching for chat..."),
-                  Container(
-                      padding: EdgeInsets.all(15),
-                      width: 50,
-                      height: 50,
-                      child: CircularProgressIndicator()),
-                  OutlinedButton(
-                    onPressed: () {
-                      user.removeFromSearchForChat();
-                      Navigator.pop(context);
-                    },
-                    child: Text("End Search"),
-                  ),
-                ],
-              ),
-            );
+            return searchingContent;
           }),
     );
   }
 }
 
-class ChatWidget extends StatefulWidget {
-  // TODO Make stateless
+class ChatWidget extends StatelessWidget {
   final String chatid;
-  ChatWidget(this.chatid, {Key key}) : super(key: key);
+  final List<User> users;
+  ChatWidget(this.chatid, {Key key, this.users}) : super(key: key);
 
-  @override
-  _ChatWidgetState createState() => _ChatWidgetState();
-}
-
-class _ChatWidgetState extends State<ChatWidget> {
   Chat chat;
-  List<User> users = [];
-  bool usersLoaded = false;
   bool hasMessage = false;
   @override
   Widget build(BuildContext context) {
     TextEditingController messagingFieldController = TextEditingController();
     User user = context.watch<User>();
-    return Scaffold(
-      appBar: AppBar(
-        leading: Container(),
-        actions: [
-          chat != null && chat.chatState == ChatState.LIVE
-              ? Center(
-                  child: CountdownTimer(
-                  endTime: chat.chatData['liveAt'].millisecondsSinceEpoch +
-                      chat.chatData['timeLimit'],
-                  onEnd: () => chat.disableChat(),
-                ))
-              : Container(),
-          IconButton(
-              icon: Icon(
-                Icons.close,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                chat.disableChat();
-                Navigator.pop(context);
-              })
-        ],
-      ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        verticalDirection: VerticalDirection.up,
-        children: [
-          StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Spacer(
-                  flex: 1,
-                ),
-                Expanded(
-                  flex: 50,
-                  child: TextField(
-                    autofocus: true,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    onChanged: (value) {
-                      chat.currentMessageText = messagingFieldController.text;
-                      chat.updateUsersTyping(user.uid);
-                      setState(() {
-                        hasMessage = messagingFieldController.text != "";
-                      });
-                    },
-                    controller: messagingFieldController,
-                    decoration: InputDecoration(
-                      hintText: "Share some insight",
-                    ),
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('chats')
+            .doc(chatid)
+            .snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something went wrong');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          chat = Chat.fromSnapshot(snapshot.data);
+          switch (chat.chatState) {
+            case ChatState.CREATED:
+              User toUser = users.firstWhere((a) => a.uid != user.uid);
+              Widget profilePhoto = toUser.photoURL != null
+                  ? ClipOval(
+                      child: Image.network(
+                        toUser.photoURL,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Container();
+
+              Widget userStatus = Container();
+              switch (chat.usersStatus[toUser.uid]) {
+                case ChatUserStatus.ACCEPTED:
+                  userStatus = Text("${toUser.displayName} has accepted.");
+                  break;
+
+                case ChatUserStatus.NORESPONSE:
+                  userStatus = Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text("Waiting for ${toUser.displayName} to response."),
+                      CircularProgressIndicator()
+                    ],
+                  );
+                  break;
+                case ChatUserStatus.DECLINED:
+                case ChatUserStatus.DISCONNECTED:
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) => Navigator.pushReplacement(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.fade,
+                              child: ChatWaitingPage(),
+                            ),
+                          ));
+                  break;
+              }
+              return Scaffold(
+                body: Center(
+                  child: Column(
+                    children: [
+                      Spacer(
+                        flex: 5,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("You have been matched with:"),
+                      ),
+                      profilePhoto,
+                      Expanded(
+                        child: Text(
+                          toUser.displayName,
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                      ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Text("Add some info here"),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              chat.userDecline(user.uid);
+                              WidgetsBinding.instance.addPostFrameCallback(
+                                  (_) => Navigator.pushReplacement(
+                                        context,
+                                        PageTransition(
+                                          type: PageTransitionType.fade,
+                                          child: ChatWaitingPage(),
+                                        ),
+                                      ));
+                            },
+                            child: Text("Decline"),
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.red,
+                              onPrimary: Colors.white,
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => chat.userAccept(user.uid),
+                            child: Text("Accept"),
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.green,
+                              onPrimary: Colors.white,
+                            ),
+                          )
+                        ],
+                      ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      userStatus,
+                      Spacer(
+                        flex: 5,
+                      )
+                    ],
                   ),
                 ),
-                Container(
-                  child: IconButton(
-                    onPressed: hasMessage
-                        ? () {
-                            chat.sendMessage(
-                                content: messagingFieldController.text,
-                                contentType: 'text',
-                                userID: user.uid);
-                            messagingFieldController.clear();
+              );
+            case ChatState.LIVE:
+              // TODO: Handle this case.
+              break;
+            case ChatState.DISABLED:
+              // TODO: Handle this case.
+              break;
+            case ChatState.DELETED:
+              // TODO: Handle this case.
+              break;
+          }
+          return Scaffold(
+            appBar: AppBar(
+              leading: Container(),
+              actions: [
+                chat != null && chat.chatState == ChatState.LIVE
+                    ? Center(
+                        child: CountdownTimer(
+                        endTime:
+                            chat.chatData['liveAt'].millisecondsSinceEpoch +
+                                chat.chatData['timeLimit'],
+                        onEnd: () => chat.disableChat(),
+                      ))
+                    : Container(),
+                IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      chat.disableChat();
+                      Navigator.pop(context);
+                    })
+              ],
+            ),
+            body: Column(
+              mainAxisSize: MainAxisSize.max,
+              verticalDirection: VerticalDirection.up,
+              children: [
+                StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Expanded(
+                        flex: 50,
+                        child: TextField(
+                          autofocus: true,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          onChanged: (value) {
                             chat.currentMessageText =
                                 messagingFieldController.text;
                             chat.updateUsersTyping(user.uid);
-                          }
-                        : null,
-                    icon: Icon(Icons.arrow_upward),
-                  ),
-                ),
+                            setState(() {
+                              hasMessage = messagingFieldController.text != "";
+                            });
+                          },
+                          controller: messagingFieldController,
+                          decoration: InputDecoration(
+                            hintText: "Share some insight",
+                          ),
+                        ),
+                      ),
+                      Container(
+                        child: IconButton(
+                          onPressed: hasMessage
+                              ? () {
+                                  chat.sendMessage(
+                                      content: messagingFieldController.text,
+                                      contentType: 'text',
+                                      userID: user.uid);
+                                  messagingFieldController.clear();
+                                  chat.currentMessageText =
+                                      messagingFieldController.text;
+                                  chat.updateUsersTyping(user.uid);
+                                }
+                              : null,
+                          icon: Icon(Icons.arrow_upward),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                Expanded(child: MessageList(chat, users)),
               ],
-            );
-          }),
-          Expanded(
-            child: StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('chats')
-                  .doc(widget.chatid)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Something went wrong');
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Loading");
-                }
-                chat = Chat.fromSnapshot(snapshot.data);
-                // return ChatWidget(chat);
-                if (chat != null && !usersLoaded) {
-                  loadUsers();
-                }
-                // usersLoaded
-                // ? UserTypingWidget(chat.usersTyping, users)
-                // : Container(),
-                return MessageList(chat, usersLoaded, users);
-              },
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void loadUsers() async {
-    users.clear();
-    for (String uid in chat.userIDs) {
-      users.add(await User.getUserFromID(uid));
-    }
-    setState(() {
-      usersLoaded = true;
-    });
+          );
+        });
   }
 }
 

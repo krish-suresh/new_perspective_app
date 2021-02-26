@@ -4,3 +4,5 @@ enum ChatState {
   DISABLED,
   DELETED,
 }
+
+enum ChatUserStatus { NORESPONSE, ACCEPTED, DECLINED, DISCONNECTED }

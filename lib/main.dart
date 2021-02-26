@@ -116,7 +116,7 @@ class HomePage extends StatelessWidget {
                     context,
                     PageTransition(
                       type: PageTransitionType.fade,
-                      child: ChatPage(),
+                      child: ChatWaitingPage(),
                     ),
                   );
                 }),
