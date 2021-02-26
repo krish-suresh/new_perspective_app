@@ -12,6 +12,7 @@ export const createChat = functions.firestore.document("/chatSearch/searchingUse
     const uid1: string = listOfUsers[1];
     const users: string[] = [uid0, uid1];
     try {
+      // admin.firestore().collection("questions").wh TODO this needs to query for random question
       const chat = {
         users: users,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -28,6 +29,10 @@ export const createChat = functions.firestore.document("/chatSearch/searchingUse
         usersTyping: {
           [uid0]: false,
           [uid1]: false,
+        },
+        question: {
+          id: "9psFVZljDlbGDML02F5S",
+          text: "What is the meaning of Life?",
         },
       };
       admin.firestore().collection("chats").add(chat);
