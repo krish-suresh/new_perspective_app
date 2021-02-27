@@ -11,7 +11,8 @@ class UserInfoFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     User user = context.watch<User>();
     print("On Reg Page");
-    TextEditingController demNumberController = TextEditingController();
+    TextEditingController displayNameController = TextEditingController();
+    displayNameController.text = user.displayName;
     bool showError = false;
 
     Widget profilePhoto = user.photoURL != null
@@ -26,88 +27,106 @@ class UserInfoFormPage extends StatelessWidget {
         : Container();
     return Scaffold(
       body: Center(
-        child: FutureBuilder<List<DemographicQuestion>>(
-            future: DemographicQuestion.getAllQuestions(),
-            builder: (BuildContext context,
-                AsyncSnapshot<List<DemographicQuestion>> snapshot) {
-              if (snapshot.hasError) {
-                return Text("Error occured loading questions :(");
-              } else if (snapshot.hasData) {
-                return StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Spacer(
-                        flex: 15,
-                      ),
-                      Text(
-                        "Demographic form to better match you to a new perspective",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w400),
-                      ),
-                      Spacer(
-                        flex: 2,
-                      ),
-                      profilePhoto,
-                      Spacer(
-                        flex: 5,
-                      ),
-                      Visibility(
-                        child: Text(
-                          "Please fill out all the fields",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        visible: showError,
-                      ),
-                      Spacer(
-                        flex: 1,
-                      ),
-                      ...snapshot.data
-                          .map((e) => e.getWidget())
-                          .intersperseOuter(Spacer(
-                            flex: 1,
-                          )),
-                      ElevatedButton(
-                        child: Text("Submit"),
-                        onPressed: () {
-                          //   user.displayName = displayNameController.text;
-                          //   user.photoURL = photoURLCheckbox
-                          //       ? "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png"
-                          //       : user.photoURL; // TODO make this dynamic
+        child: SingleChildScrollView(
+          child: FutureBuilder<List<DemographicQuestion>>(
+              future: DemographicQuestion.getAllQuestions(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<DemographicQuestion>> snapshot) {
+                if (snapshot.hasError) {
+                  return Text("Error occured loading questions :(");
+                } else if (snapshot.hasData) {
+                  return StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Spacer(
+                          //   flex: 15,
+                          // ),
+                          Text(
+                            "Demographic form to better match you to a new perspective",
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w400),
+                          ),
+                          // Spacer(
+                          //   flex: 2,
+                          // ),
+                          profilePhoto,
+                          // Spacer(
+                          //   flex: 5,
+                          // ),
+                          Visibility(
+                            child: Text(
+                              "Please fill out all the fields",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            visible: showError,
+                          ),
+                          // Spacer(
+                          //   flex: 1,
+                          // ),
+                          // Flexible(
+                          //   flex: 25,
+                          //   child: ListView(
+                          //     children: [
+                          TextField(
+                            controller: displayNameController,
+                            decoration:
+                                InputDecoration(labelText: "Display Name"),
+                          ),
+                          ...snapshot.data.map((e) => e.getWidget())
+                          // .intersperseOuter(Spacer(
+                          //   flex: 1,
+                          // ))
+                          ,
+                          //     ],
+                          //   ),
+                          // ),
+                          ElevatedButton(
+                            child: Text("Submit"),
+                            onPressed: () {
+                              //   user.photoURL = photoURLCheckbox
+                              //       ? "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png"
+                              //       : user.photoURL; // TODO make this dynamic
 
-                          if (snapshot.data.every(
-                              (element) => element.selectedValue != null)) {
-                            user.userDemographicData = {
-                              for (DemographicQuestion question
-                                  in snapshot.data)
-                                question.id: question.getValue()
-                            };
-                            user.registered = true;
-                            user.updateUser();
-                          } else {
-                            print("Show Error");
-                            setState(() {
-                              showError = true;
-                            });
-                          }
-                        },
+                              if (snapshot.data.every((element) =>
+                                      element.selectedValue != null) &&
+                                  displayNameController.text != "") {
+                                user.displayName = displayNameController.text;
+                                user.userDemographicData = {
+                                  for (DemographicQuestion question
+                                      in snapshot.data)
+                                    question.id: question.getValue()
+                                };
+                                user.registered = true;
+                                user.updateUser();
+                              } else {
+                                print("Show Error");
+                                setState(() {
+                                  showError = true;
+                                });
+                              }
+                            },
+                          ),
+                          // Spacer(
+                          //   flex: 10,
+                          // ),
+                        ],
                       ),
-                      Spacer(
-                        flex: 10,
-                      ),
-                    ],
-                  );
-                });
-              }
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Loading questions..."),
-                  CircularProgressIndicator(),
-                ],
-              );
-            }),
+                    );
+                  });
+                }
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Loading questions..."),
+                    CircularProgressIndicator(),
+                  ],
+                );
+              }),
+        ),
       ),
     );
   }

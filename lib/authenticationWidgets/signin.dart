@@ -64,7 +64,7 @@ class SignInPage extends StatelessWidget {
                   flex: 7,
                 ),
                 Visibility(
-                    visible: showNotRegError,
+                    visible: true,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -81,10 +81,11 @@ class SignInPage extends StatelessWidget {
                 GoogleAuthButton(
                   onPressed: () async {
                     bool temp = await _authService.googleSignIn() == null;
-                    setState(() {
-                      showNotRegError = temp;
-                      _authService.signOut();
-                    });
+                    if (temp) _authService.signOut();
+
+                    // setState(() {
+                    //   showNotRegError = temp;
+                    // });
                   },
                 ),
                 Spacer(

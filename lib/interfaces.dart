@@ -354,10 +354,7 @@ class DemographicQuestion {
         return Container();
         break;
     }
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: content,
-    );
+    return content;
   }
 
   static Future<List<DemographicQuestion>> getAllQuestions() {
