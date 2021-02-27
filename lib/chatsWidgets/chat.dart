@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:new_perspective_app/enums.dart';
 import 'package:new_perspective_app/interfaces.dart';
@@ -238,6 +239,22 @@ class ChatWidget extends StatelessWidget {
                         endTime:
                             chat.chatData['liveAt'].millisecondsSinceEpoch +
                                 chat.chatData['timeLimit'],
+                        widgetBuilder: (_, CurrentRemainingTime time) {
+                          if (time.min.toDouble() * 60.0 + time.sec.toDouble() <
+                              30) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5))),
+                              padding: EdgeInsets.all(4),
+                              child: Text(
+                                  'Time Remaining: min: ${time.min ?? 0} sec: ${time.sec ?? 0}'),
+                            );
+                          }
+                          return Text(
+                              'Time Remaining: min: ${time.min ?? 0} sec: ${time.sec ?? 0}');
+                        },
                         onEnd: () => chat.completeChat(),
                       ))
                     : Container(),
@@ -307,7 +324,10 @@ class ChatWidget extends StatelessWidget {
                 Container(
                   child: Row(
                     children: [
-                      Text("Discussion Question: ${chat.question['text']}"),
+                      Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Text(
+                              "Discussion Question: ${chat.question['text']}")),
                       IconButton(
                           icon: Icon(Icons.arrow_right),
                           onPressed: () => chat.newQuestion())

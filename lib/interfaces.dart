@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -141,7 +143,8 @@ class Chat {
     print("New Question");
     FirebaseFirestore.instance
         .collection('questions')
-        .where('id', isNotEqualTo: question['id'])
+        // .where('id', isNotEqualTo: question['id'])
+        .where('random', isEqualTo: Random().nextInt(10).toString())
         .get()
         .then((value) {
       if (value.docs.length == 0) {
