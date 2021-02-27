@@ -220,8 +220,18 @@ class ChatWidget extends StatelessWidget {
             case ChatState.COMPLETED:
               // ScaffoldMessenger.of(context).showSnackBar(
               //     SnackBar(content: Text("Your Chat Has Been Completed.")));
-              Navigator.pop(context);
-              return Container();
+              // Navigator.pop(context);
+              WidgetsBinding.instance.addPostFrameCallback((_) =>
+                  Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                          child: InsightScorePage(
+                              chat,
+                              users
+                                  .where((element) => element.uid != user.uid)
+                                  .first),
+                          type: PageTransitionType.fade)));
+
               break;
             case ChatState.DELETED:
               // ScaffoldMessenger.of(context).showSnackBar(
@@ -240,8 +250,9 @@ class ChatWidget extends StatelessWidget {
                             chat.chatData['liveAt'].millisecondsSinceEpoch +
                                 chat.chatData['timeLimit'],
                         widgetBuilder: (_, CurrentRemainingTime time) {
-                          if (time.min.toDouble() * 60.0 + time.sec.toDouble() <
-                              30) {
+                          if (((time.min ?? 0).toDouble() * 60.0 +
+                                  (time.sec ?? 0).toDouble()) <
+                              30.0) {
                             return Container(
                               decoration: BoxDecoration(
                                   color: Colors.red,
@@ -290,8 +301,11 @@ class ChatWidget extends StatelessWidget {
                             chat.currentMessageText =
                                 messagingFieldController.text;
                             chat.updateUsersTyping(user.uid);
-                            setState(() {
-                              hasMessage = messagingFieldController.text != "";
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              setState(() {
+                                hasMessage =
+                                    messagingFieldController.text != "";
+                              });
                             });
                           },
                           controller: messagingFieldController,
@@ -422,6 +436,62 @@ class ChatCard extends StatelessWidget {
     return Card(
       child: Column(
         children: [Text("Chat ${chat.chatID}")],
+      ),
+    );
+  }
+}
+
+class InsightScorePage extends StatelessWidget {
+  final Chat chat;
+  final User scoringUser;
+  const InsightScorePage(
+    this.chat,
+    this.scoringUser, {
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    int _currentSliderValue = 5;
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+                "Rate ${scoringUser.displayName} on how much insight they shared.",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline6),
+            StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                children: [
+                  Text(
+                    _currentSliderValue.toString(),
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                  Slider(
+                    value: _currentSliderValue.toDouble(),
+                    min: 0,
+                    max: 10,
+                    divisions: 10,
+                    label: _currentSliderValue.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        _currentSliderValue = value.toInt();
+                      });
+                    },
+                  ),
+                  ElevatedButton(
+                      onPressed: () => chat
+                          .scoreUser(scoringUser.uid, _currentSliderValue)
+                          .then((value) => Navigator.pop(context)),
+                      child: Text("Submit"))
+                ],
+              );
+            })
+          ],
+        ),
       ),
     );
   }

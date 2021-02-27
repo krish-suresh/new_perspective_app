@@ -157,6 +157,13 @@ class Chat {
       });
     });
   }
+
+  Future<void> scoreUser(String uid, int currentSliderValue) async {
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatID)
+        .update({'userScores.${uid}': currentSliderValue});
+  }
 }
 
 class User {
