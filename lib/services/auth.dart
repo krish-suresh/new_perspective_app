@@ -86,21 +86,21 @@ class AuthService {
     // return user;
   }
 
-  Stream<User> authStateChanges() {
+  Stream<bool> userSignedIn() {
     return _auth.authStateChanges().asyncMap((user) async {
       print("Auth State Changed");
       if (user == null) {
         print("Not Signed In");
-        return null;
+        return false;
       }
       print("User Authed");
       DocumentSnapshot userDoc =
           await _db.collection('users').doc(user.uid).get();
       if (userDoc.data() == null) {
         print("Not registered");
-        return null;
+        return false;
       }
-      return User.fromJson(userDoc.data());
+      return true;
     });
   }
 

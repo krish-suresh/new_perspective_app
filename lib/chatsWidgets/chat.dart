@@ -351,3 +351,58 @@ class UserTypingWidget extends StatelessWidget {
         : Container();
   }
 }
+
+class ChatHistoryList extends StatelessWidget {
+  const ChatHistoryList({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    User user = context.watch<User>();
+    return Container(
+      child: FutureBuilder<List<Chat>>(
+        future: user.getChatHistory(user.uid),
+        builder: (BuildContext context, AsyncSnapshot<List<Chat>> snapshot) {
+          if (snapshot.hasError) {
+            return Text("Something went wrong while fetching chat history. :(");
+          } else if (snapshot.hasData) {
+            if (snapshot.data.length == 0) {
+              return Text("You have no chats.");
+            } else {
+              return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    return ChatCard(snapshot.data[index]);
+                  });
+            }
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Loading Chat History..."),
+              SizedBox(
+                height: 50,
+              ),
+              CircularProgressIndicator()
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ChatCard extends StatelessWidget {
+  final Chat chat;
+  const ChatCard(this.chat, {Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        children: [Text("Chat ${chat.chatID}")],
+      ),
+    );
+  }
+}

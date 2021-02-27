@@ -10,7 +10,6 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User user = context.watch<User>();
     AuthService _authService = new AuthService();
 
     return Scaffold(

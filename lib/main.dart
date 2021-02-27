@@ -5,7 +5,7 @@ import 'package:new_perspective_app/services/auth.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'authenticationWidgets/signin.dart';
 import 'authenticationWidgets/useremailnotverifiedpage.dart';
 import 'authenticationWidgets/userinfoformpage.dart';
@@ -36,9 +36,13 @@ class MyApp extends StatelessWidget {
     AuthService authService = new AuthService();
     return MultiProvider(
       providers: [
-        StreamProvider<User>.value(
-          value: authService.authStateChanges(),
+        StreamProvider<bool>.value(
+          value: authService.userSignedIn() ?? false,
         ),
+        StreamProvider.value(
+            value: User.getStream(FirebaseAuth.instance.currentUser != null
+                ? FirebaseAuth.instance.currentUser.uid
+                : null))
       ],
       child: MaterialApp(
         title: 'New Perspective App',
@@ -56,6 +60,11 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     User user = context.watch<User>();
     print("On Home Page");
+    if (user == null) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     AuthService _authService = new AuthService();
     bool userVerified = user.isVerified ?? false;
     bool userRegistered = user.registered ?? false;
@@ -98,17 +107,23 @@ class HomePage extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: Center(child: Text("CHAT HISTORY COMING SOON")),
+              child: Center(child: ChatHistoryList()),
               flex: 25,
             ),
-            Text("Find a new perspective"),
             Spacer(
               flex: 1,
             ),
-            IconButton(
-                icon: Icon(
-                  Icons.remove_red_eye_outlined,
-                  color: Colors.black,
+            ElevatedButton.icon(
+                label: Text("Find a new perspective"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green.shade300,
+                ),
+                icon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: Colors.white,
+                  ),
                 ),
                 onPressed: () {
                   user.addToSearchForChat();
