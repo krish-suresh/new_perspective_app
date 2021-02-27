@@ -12,11 +12,10 @@ class SignInRegisterPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool userSignedIn = context.watch<bool>() ?? false;
-    print(userSignedIn);
+    User user = context.watch<User>();
     return Container(
       height: 100,
-      child: !userSignedIn
+      child: user == null
           ? Scaffold(
               body: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -58,7 +57,6 @@ class SignInPage extends StatelessWidget {
         child: Center(
           child: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-            _authService.signOut();
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -85,6 +83,7 @@ class SignInPage extends StatelessWidget {
                     bool temp = await _authService.googleSignIn() == null;
                     setState(() {
                       showNotRegError = temp;
+                      _authService.signOut();
                     });
                   },
                 ),

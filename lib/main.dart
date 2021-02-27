@@ -5,7 +5,7 @@ import 'package:new_perspective_app/services/auth.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuthLib;
 import 'authenticationWidgets/signin.dart';
 import 'authenticationWidgets/useremailnotverifiedpage.dart';
 import 'authenticationWidgets/userinfoformpage.dart';
@@ -33,23 +33,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthService authService = new AuthService();
-    return MultiProvider(
-      providers: [
-        StreamProvider<bool>.value(
-          value: authService.userSignedIn() ?? false,
-        ),
-        StreamProvider.value(
-            value: User.getStream(FirebaseAuth.instance.currentUser != null
-                ? FirebaseAuth.instance.currentUser.uid
-                : null))
-      ],
-      child: MaterialApp(
-        title: 'New Perspective App',
-        theme: appTheme,
-        home: SignInRegisterPageView(),
-      ),
-    );
+    return StreamBuilder<FirebaseAuthLib.User>(
+        stream: FirebaseAuthLib.FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          return MultiProvider(
+            providers: [
+              StreamProvider.value(
+                  value: User.getStream(snapshot.hasData &&
+                          snapshot.data != null
+                      ? FirebaseAuthLib.FirebaseAuth.instance.currentUser.uid
+                      : null))
+            ],
+            child: MaterialApp(
+              title: 'New Perspective App',
+              theme: appTheme,
+              home: SignInRegisterPageView(),
+            ),
+          );
+        });
   }
 }
 
@@ -62,7 +63,7 @@ class HomePage extends StatelessWidget {
     print("On Home Page");
     if (user == null) {
       return Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: Text("Something went wrong :(")),
       );
     }
     AuthService _authService = new AuthService();
@@ -98,6 +99,13 @@ class HomePage extends StatelessWidget {
                   flex: 5,
                 ),
                 IconButton(
+                  onPressed: () => print("TODO leaderboard page"),
+                  icon: Icon(Icons.leaderboard_outlined),
+                ),
+                Spacer(
+                  flex: 1,
+                ),
+                IconButton(
                   onPressed: () => _authService.signOut(),
                   icon: Icon(Icons.logout),
                 ),
@@ -106,6 +114,7 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
+            Text("Chat History: "),
             Expanded(
               child: Center(child: ChatHistoryList()),
               flex: 25,
