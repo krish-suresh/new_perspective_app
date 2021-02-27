@@ -12,3 +12,5 @@ extension ChatStateExtension on ChatState {
 }
 
 enum ChatUserStatus { NORESPONSE, ACCEPTED, DECLINED, DISCONNECTED }
+
+enum DemographicQuestionType { dropdown, textfield, multiselect }

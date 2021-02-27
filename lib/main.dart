@@ -40,7 +40,9 @@ class MyApp extends StatelessWidget {
           value: authService.userSignedIn() ?? false,
         ),
         StreamProvider.value(
-            value: User.getStream(FirebaseAuth.instance.currentUser.uid))
+            value: User.getStream(FirebaseAuth.instance.currentUser != null
+                ? FirebaseAuth.instance.currentUser.uid
+                : null))
       ],
       child: MaterialApp(
         title: 'New Perspective App',
@@ -60,7 +62,7 @@ class HomePage extends StatelessWidget {
     print("On Home Page");
     if (user == null) {
       return Scaffold(
-        body: CircularProgressIndicator(),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
     AuthService _authService = new AuthService();

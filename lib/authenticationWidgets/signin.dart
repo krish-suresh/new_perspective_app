@@ -43,12 +43,6 @@ class SignInRegisterPageView extends StatelessWidget {
             )
           : HomePage(),
     );
-// MultiProvider(
-//                 providers: [
-
-//                 ],
-//                 child: HomePage(),
-//               ));
   }
 }
 
