@@ -178,6 +178,7 @@ class User {
   Map<String, dynamic> userDemographicData;
 
   bool isVerified;
+  int insightScore = 0;
   User(this.userProfile,
       {this.uid,
       this.displayName,
@@ -187,7 +188,8 @@ class User {
       this.createdAt,
       this.registered,
       this.isVerified,
-      this.userDemographicData});
+      this.userDemographicData,
+      this.insightScore});
   factory User.fromJson(Map<String, dynamic> userData) {
     User user = User(
       userData,
@@ -199,6 +201,7 @@ class User {
       createdAt: userData['createdAt'],
       registered: userData['registered'],
       isVerified: userData['isVerified'],
+      insightScore: userData['insightScore'] ?? 0,
       userDemographicData:
           Map<String, dynamic>.from(userData['userDemographicData'] ?? {}),
     );
@@ -291,6 +294,16 @@ class User {
         .where('chatState', isEqualTo: ChatState.COMPLETED.name)
         .get()
         .then((value) => value.docs.map((e) => Chat.fromSnapshot(e)).toList());
+  }
+
+  static Future<List<User>> getLeaderboard() async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .orderBy('insightScore')
+        .get()
+        .then((value) {
+      return value.docs.map((e) => User.fromJson(e.data())).toList();
+    });
   }
 }
 

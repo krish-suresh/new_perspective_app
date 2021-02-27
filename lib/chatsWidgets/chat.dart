@@ -236,7 +236,16 @@ class ChatWidget extends StatelessWidget {
             case ChatState.DELETED:
               // ScaffoldMessenger.of(context).showSnackBar(
               //     SnackBar(content: Text("Your Chat Has Been Closed.")));
-              Navigator.pop(context);
+              WidgetsBinding.instance.addPostFrameCallback((_) =>
+                  Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                          child: DeclinedPage(
+                              userName: users
+                                  .where((element) => element.uid != user.uid)
+                                  .first
+                                  .displayName),
+                          type: PageTransitionType.fade)));
               break;
           }
           return Scaffold(
@@ -433,9 +442,14 @@ class ChatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User user = context.watch<User>();
     return Card(
       child: Column(
-        children: [Text("Chat ${chat.chatID}")],
+        children: [
+          Text("Chat on ${chat.chatData['completedAt'].toDate()}"),
+          Text(
+              "Insight Score: ${chat.chatData['userScores'] != null ? chat.chatData['userScores'][user.uid] ?? 'N/A' : 'N/A'}")
+        ],
       ),
     );
   }
@@ -494,5 +508,26 @@ class InsightScorePage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class DeclinedPage extends StatelessWidget {
+  final String userName;
+  const DeclinedPage({Key key, this.userName}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("$userName has declined your chat."),
+          ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("Return to Home Screen"))
+        ],
+      ),
+    ));
   }
 }

@@ -98,13 +98,21 @@ class HomePage extends StatelessWidget {
                 Spacer(
                   flex: 5,
                 ),
-                IconButton(
-                  onPressed: () => print("TODO leaderboard page"),
-                  icon: Icon(Icons.leaderboard_outlined),
-                ),
-                Spacer(
-                  flex: 1,
-                ),
+                // IconButton(
+                //   onPressed: () {
+                //     Navigator.push(
+                //       context,
+                //       PageTransition(
+                //         type: PageTransitionType.fade,
+                //         child: UserLeaderboard(),
+                //       ),
+                //     );
+                //   },
+                //   icon: Icon(Icons.leaderboard_outlined),
+                // ),
+                // Spacer(
+                //   flex: 1,
+                // ),
                 IconButton(
                   onPressed: () => _authService.signOut(),
                   icon: Icon(Icons.logout),
@@ -177,6 +185,41 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class UserLeaderboard extends StatelessWidget {
+  const UserLeaderboard({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: FutureBuilder<List<User>>(
+          future: User.getLeaderboard(),
+          builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(snapshot.data[index].displayName),
+                      trailing: Text(
+                          "Insight Score: ${snapshot.data[index].insightScore}"),
+                    );
+                  });
+            }
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Loading leaderboard..."),
+                  CircularProgressIndicator()
+                ],
+              ),
+            );
+          }),
     );
   }
 }

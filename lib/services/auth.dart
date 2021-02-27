@@ -124,7 +124,8 @@ class AuthService {
       'lastSeen': Timestamp.now(),
       'createdAt': Timestamp.now(),
       'registered': false,
-      'isVerified': true
+      'isVerified': true,
+      'insightScore': 0,
     });
     print("Signing in google: " + user.uid);
     await createUserProfile(user);
@@ -140,6 +141,7 @@ class AuthService {
       'createdAt': Timestamp.now(),
       'registered': false,
       'isVerified': true,
+      'insightScore': 0,
       'photoURL':
           "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png", // TODO THIS IS HARDCODED FOR NOW
     });
