@@ -7,7 +7,7 @@ import 'package:new_perspective_app/interfaces.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:intl/intl.dart';
 import 'messages.dart';
 
 class ChatWaitingPage extends StatelessWidget {
@@ -411,10 +411,44 @@ class ChatHistoryList extends StatelessWidget {
             if (snapshot.data.length == 0) {
               return Text("You have no chats.");
             } else {
+              snapshot.data.sort((a, b) => b.chatData['completedAt']
+                  .compareTo(a.chatData['completedAt']));
               return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
-                    return ChatCard(snapshot.data[index]);
+                    return ListTile(
+                      trailing: snapshot.data[index].chatData['userScores'] !=
+                              null
+                          ? Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Text(snapshot.data[index]
+                                    .chatData['userScores'][user.uid]
+                                    .toString()),
+                                CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      snapshot.data[index]
+                                                      .chatData['userScores']
+                                                  [user.uid] >
+                                              7
+                                          ? Colors.green
+                                          : (snapshot.data[index].chatData[
+                                                      'userScores'][user.uid] >
+                                                  4
+                                              ? Colors.orange
+                                              : Colors.red)),
+                                  value: snapshot.data[index]
+                                          .chatData['userScores'][user.uid] /
+                                      10,
+                                ),
+                              ],
+                            )
+                          : Text("N/A"),
+                      title: Text(DateFormat('MM/dd/yyyy').add_jm().format(
+                          snapshot.data[index].chatData['completedAt']
+                              .toDate())),
+                    );
+                    // return ChatCard(snapshot.data[index]);
                   });
             }
           }
@@ -498,7 +532,7 @@ class InsightScorePage extends StatelessWidget {
                   ),
                   ElevatedButton(
                       onPressed: () => chat
-                          .scoreUser(scoringUser.uid, _currentSliderValue)
+                          .scoreUser(scoringUser, _currentSliderValue)
                           .then((value) => Navigator.pop(context)),
                       child: Text("Submit"))
                 ],
@@ -520,7 +554,7 @@ class DeclinedPage extends StatelessWidget {
     return Scaffold(
         body: Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text("$userName has declined your chat."),
           ElevatedButton(

@@ -19,7 +19,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final ThemeData appTheme = ThemeData(
-    primarySwatch: Colors.blue,
+    primarySwatch: Colors.green,
     backgroundColor: Colors.white,
     fontFamily: 'Roboto',
     textTheme: TextTheme(
@@ -98,21 +98,21 @@ class HomePage extends StatelessWidget {
                 Spacer(
                   flex: 5,
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     Navigator.push(
-                //       context,
-                //       PageTransition(
-                //         type: PageTransitionType.fade,
-                //         child: UserLeaderboard(),
-                //       ),
-                //     );
-                //   },
-                //   icon: Icon(Icons.leaderboard_outlined),
-                // ),
-                // Spacer(
-                //   flex: 1,
-                // ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: UserLeaderboard(),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.leaderboard_outlined),
+                ),
+                Spacer(
+                  flex: 1,
+                ),
                 IconButton(
                   onPressed: () => _authService.signOut(),
                   icon: Icon(Icons.logout),
@@ -195,18 +195,41 @@ class UserLeaderboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("Insight Score Leaderboard"),
+      ),
       body: FutureBuilder<List<User>>(
           future: User.getLeaderboard(),
           builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
             if (snapshot.hasData) {
+              print("Number of users" + snapshot.data.length.toString());
+              snapshot.data
+                  .sort((a, b) => a.insightScore < b.insightScore ? 1 : -1);
               return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
+                    Widget profilePhoto = snapshot.data[index].photoURL != null
+                        ? SizedBox(
+                            width: 25,
+                            height: 25,
+                            child: ClipOval(
+                              child: Image.network(
+                                snapshot.data[index].photoURL,
+                                width: 25,
+                                height: 25,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            width: 25,
+                            height: 25,
+                          );
                     return ListTile(
-                      title: Text(snapshot.data[index].displayName),
+                      leading: profilePhoto,
+                      title: Text(snapshot.data[index].displayName ?? ""),
                       trailing: Text(
-                          "Insight Score: ${snapshot.data[index].insightScore}"),
+                          "Total Insight Score: ${snapshot.data[index].insightScore}"),
                     );
                   });
             }

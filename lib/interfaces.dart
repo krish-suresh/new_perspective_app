@@ -158,11 +158,14 @@ class Chat {
     });
   }
 
-  Future<void> scoreUser(String uid, int currentSliderValue) async {
-    await FirebaseFirestore.instance
-        .collection('chats')
-        .doc(chatID)
-        .update({'userScores.${uid}': currentSliderValue});
+  Future<void> scoreUser(User user, int currentSliderValue) async {
+    await FirebaseFirestore.instance.collection('chats').doc(chatID).update(
+        {'userScores.${user.uid}': currentSliderValue}).then((value) async {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({'insightScore': user.insightScore + currentSliderValue});
+    });
   }
 }
 
@@ -226,6 +229,7 @@ class User {
       'lastSeen': lastSeen,
       'registered': registered,
       'isVerified': isVerified,
+      'insightScore': insightScore,
       'userDemographicData': userDemographicData
     };
   }
@@ -299,7 +303,7 @@ class User {
   static Future<List<User>> getLeaderboard() async {
     return await FirebaseFirestore.instance
         .collection("users")
-        .orderBy('insightScore')
+        // .orderBy('insightScore')
         .get()
         .then((value) {
       return value.docs.map((e) => User.fromJson(e.data())).toList();
