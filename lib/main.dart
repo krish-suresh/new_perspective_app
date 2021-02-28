@@ -225,7 +225,22 @@ class UserLeaderboard extends StatelessWidget {
                             width: 25,
                             height: 25,
                           );
+                    Color tileColor = Colors.white;
+                    switch (index) {
+                      case 0:
+                        tileColor = Colors.amber;
+                        break;
+                      case 1:
+                        tileColor = Colors.grey.shade500;
+                        break;
+                      case 2:
+                        tileColor = Colors.brown;
+                        break;
+                      default:
+                        break;
+                    }
                     return ListTile(
+                      tileColor: tileColor,
                       leading: profilePhoto,
                       title: Text(snapshot.data[index].displayName ?? ""),
                       trailing: Text(
