@@ -278,14 +278,22 @@ class ChatWidget extends StatelessWidget {
                         onEnd: () => chat.completeChat(),
                       ))
                     : Container(),
-                IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      chat.completeChat();
-                    })
+                Container(
+                  // color: Colors.red,
+                  // padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  margin: EdgeInsets.all(10),
+                  child: IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        chat.completeChat();
+                      }),
+                )
               ],
             ),
             body: Column(
@@ -345,15 +353,26 @@ class ChatWidget extends StatelessWidget {
                 }),
                 Expanded(child: MessageList(chat, users)),
                 Container(
-                  child: Row(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Text(
-                              "Discussion Question: ${chat.question['text']}")),
-                      IconButton(
-                          icon: Icon(Icons.arrow_right),
-                          onPressed: () => chat.newQuestion())
+                            "${chat.question['text']}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1
+                                .copyWith(
+                                    fontSize: 20, fontWeight: FontWeight.w400),
+                            textAlign: TextAlign.center,
+                          )),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        child: ElevatedButton(
+                            child: Text("New Question"),
+                            onPressed: () => chat.newQuestion()),
+                      )
                     ],
                   ),
                 ),

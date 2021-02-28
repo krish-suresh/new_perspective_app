@@ -76,11 +76,11 @@ class UserInfoFormPage extends StatelessWidget {
                             decoration:
                                 InputDecoration(labelText: "Display Name"),
                           ),
-                          ...snapshot.data.map((e) => e.getWidget())
-                          // .intersperseOuter(Spacer(
-                          //   flex: 1,
-                          // ))
-                          ,
+                          ...snapshot.data
+                              .map((e) => e.getWidget())
+                              .intersperseOuter(SizedBox(
+                                height: 15,
+                              )),
                           //     ],
                           //   ),
                           // ),
