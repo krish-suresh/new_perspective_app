@@ -50,37 +50,59 @@ class SignInPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool showNotRegError = false;
     AuthService _authService = new AuthService();
     return Scaffold(
       body: Container(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Spacer(
-                flex: 7,
-              ),
-              EmailAuthButton(),
-              Spacer(
-                flex: 1,
-              ),
-              GoogleAuthButton(
-                onPressed: () => _authService.googleSignIn(),
-              ),
-              Spacer(
-                flex: 1,
-              ),
-              AbsorbPointer(
-                child: MaterialButton(
-                  child: Text("Swipe to register >"),
-                  onPressed: () {},
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Spacer(
+                  flex: 7,
                 ),
-              ),
-              Spacer(
-                flex: 7,
-              )
-            ],
-          ),
+                Visibility(
+                    visible: true,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Please register before signing in.",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    )),
+                EmailAuthButton(
+                  onPressed: null,
+                ),
+                Spacer(
+                  flex: 1,
+                ),
+                GoogleAuthButton(
+                  onPressed: () async {
+                    bool temp = await _authService.googleSignIn() == null;
+                    if (temp) _authService.signOut();
+
+                    // setState(() {
+                    //   showNotRegError = temp;
+                    // });
+                  },
+                ),
+                Spacer(
+                  flex: 1,
+                ),
+                AbsorbPointer(
+                  child: MaterialButton(
+                    child: Text("Swipe to register >"),
+                    onPressed: () {},
+                  ),
+                ),
+                Spacer(
+                  flex: 7,
+                )
+              ],
+            );
+          }),
         ),
       ),
     );

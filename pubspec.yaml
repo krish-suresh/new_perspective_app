@@ -37,6 +37,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   auth_buttons: ^0.0.6
+  page_transition: "^1.1.7+6"
+  enum_to_string: ^1.0.14
+  intersperse: ^1.1.1
+  flutter_countdown_timer: ^3.0.1
+  intl: ^0.16.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

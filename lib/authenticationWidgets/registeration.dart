@@ -10,7 +10,6 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User user = context.watch<User>();
     AuthService _authService = new AuthService();
 
     return Scaffold(
@@ -24,7 +23,7 @@ class RegisterPage extends StatelessWidget {
               ),
               EmailAuthButton(
                 text: 'Signup with Email',
-                // onPressed: () => print("TODO Show Form"),
+                onPressed: null,
               ),
               Spacer(
                 flex: 1,
