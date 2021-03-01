@@ -140,11 +140,15 @@ class Chat {
   }
 
   newQuestion() {
-    print("New Question");
+    print(question['random']);
+    int r = 0;
+    do {
+      r = Random().nextInt(10);
+    } while (r.toString() == question['random']);
+    print("New Question " + r.toString());
     FirebaseFirestore.instance
         .collection('questions')
-        // .where('id', isNotEqualTo: question['id'])
-        .where('random', isEqualTo: Random().nextInt(10).toString())
+        .where('random', isEqualTo: r.toString())
         .get()
         .then((value) {
       if (value.docs.length == 0) {
@@ -153,7 +157,11 @@ class Chat {
 
       Map<String, dynamic> data = value.docs.first.data();
       FirebaseFirestore.instance.collection('chats').doc(chatID).update({
-        'question': {'id': data['id'], 'text': data['question']}
+        'question': {
+          'id': data['id'],
+          'text': data['question'],
+          'random': data['random']
+        }
       });
     });
   }
