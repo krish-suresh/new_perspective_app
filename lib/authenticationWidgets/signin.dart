@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/authenticationWidgets/registeration.dart';
+import 'package:new_perspective_app/homeWidgets/home.dart';
 import 'package:new_perspective_app/interfaces.dart';
 import 'package:new_perspective_app/services/auth.dart';
 
-import '../main.dart';
 import 'package:provider/provider.dart';
 import 'package:auth_buttons/auth_buttons.dart';
 
