@@ -216,6 +216,19 @@ class ChatWidget extends StatelessWidget {
               );
             case ChatState.LIVE:
               // TODO: Handle this case.
+              if (chat.emotionEvent != null && chat.isEmotionEventActive()) {
+                return Scaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                            "We detected the discussion to be getting heated, please take a quick break.")
+                      ],
+                    ),
+                  ),
+                );
+              }
               break;
             case ChatState.COMPLETED:
               // ScaffoldMessenger.of(context).showSnackBar(

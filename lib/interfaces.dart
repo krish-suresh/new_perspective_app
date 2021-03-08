@@ -43,6 +43,7 @@ class Chat {
   final ChatState chatState;
   final Map<String, ChatUserStatus> usersStatus;
   final Map<String, dynamic> question;
+  final Map<String, dynamic> emotionEvent;
   Chat(
       {this.messages,
       this.usersTyping,
@@ -51,7 +52,8 @@ class Chat {
       this.userIDs,
       this.chatID,
       this.usersStatus,
-      this.question});
+      this.question,
+      this.emotionEvent});
 
   factory Chat.fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> chatData = snapshot.data();
@@ -69,7 +71,8 @@ class Chat {
         usersStatus: Map<String, String>.from(chatData['usersStatus']).map(
             (key, value) => MapEntry(
                 key, EnumToString.fromString(ChatUserStatus.values, value))),
-        question: chatData['question']);
+        question: chatData['question'],
+        emotionEvent: chatData['emotionEvent']);
     chat.messages.sort((a, b) => a.sentAt.isBefore(b.sentAt) ? 1 : -1);
     return chat;
   }
@@ -174,6 +177,12 @@ class Chat {
           .doc(user.uid)
           .update({'insightScore': user.insightScore + currentSliderValue});
     });
+  }
+
+  bool isEmotionEventActive() {
+    return this.emotionEvent['createdAt'].millisecondsSinceEpoch +
+            (this.emotionEvent['coolDownTimeSec'] * 1000) >
+        Timestamp.now().millisecondsSinceEpoch;
   }
 }
 
