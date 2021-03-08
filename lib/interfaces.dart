@@ -184,6 +184,11 @@ class Chat {
             (this.emotionEvent['coolDownTimeSec'] * 1000) >
         Timestamp.now().millisecondsSinceEpoch;
   }
+
+  getEmotionEventEndTime() {
+    return this.emotionEvent['createdAt'].millisecondsSinceEpoch +
+        (this.emotionEvent['coolDownTimeSec'] * 1000);
+  }
 }
 
 class User {
