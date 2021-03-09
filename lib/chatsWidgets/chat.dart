@@ -252,7 +252,9 @@ class ChatWidget extends StatelessWidget {
                                         children: [
                                           Text((time.sec ?? 0).toString()),
                                           CircularProgressIndicator(
-                                            value: time.sec / 10,
+                                            value: time.sec /
+                                                chat.emotionEvent[
+                                                    'coolDownTimeSec'],
                                           ),
                                         ],
                                       );
