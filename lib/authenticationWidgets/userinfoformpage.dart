@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:new_perspective_app/enums.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
 import 'package:provider/provider.dart';
 import 'package:intersperse/intersperse.dart';
@@ -15,16 +14,7 @@ class UserInfoFormPage extends StatelessWidget {
     displayNameController.text = user.displayName;
     bool showError = false;
 
-    Widget profilePhoto = user.photoURL != null
-        ? ClipOval(
-            child: Image.network(
-              user.photoURL,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-            ),
-          )
-        : Container();
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -53,7 +43,7 @@ class UserInfoFormPage extends StatelessWidget {
                           // Spacer(
                           //   flex: 2,
                           // ),
-                          profilePhoto,
+                          user.profileImageLarge(),
                           // Spacer(
                           //   flex: 5,
                           // ),

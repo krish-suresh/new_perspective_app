@@ -1,12 +1,12 @@
 import 'package:new_perspective_app/chatsWidgets/chatHistory.dart';
 import 'package:new_perspective_app/chatsWidgets/chatWaiting.dart';
+import 'package:new_perspective_app/homeWidgets/profile.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/authenticationWidgets/useremailnotverifiedpage.dart';
 import 'package:new_perspective_app/authenticationWidgets/userinfoformpage.dart';
-import 'package:new_perspective_app/chatsWidgets/chat.dart';
 import 'package:new_perspective_app/services/auth.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -61,15 +61,35 @@ class HomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       PageTransition(
-                        type: PageTransitionType.fade,
+                        type: PageTransitionType.rightToLeftWithFade,
                         child: UserLeaderboard(),
                       ),
                     );
                   },
                   icon: Icon(Icons.leaderboard_outlined),
                 ),
-                Spacer(
-                  flex: 1,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.bottomToTop,
+                          child: Profile(),
+                        ));
+                  },
+                  child: /*SizedBox(
+                    width: 25,
+                    height: 25,
+                    child: ClipOval(
+                      child: Image.network(
+                        user.photoURL,
+                        width: 25,
+                        height: 25,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),*/
+                  user.profileImage()
                 ),
                 IconButton(
                   onPressed: () => _authService.signOut(),
@@ -82,7 +102,19 @@ class HomePage extends StatelessWidget {
             ),
             Text("Chat History: "),
             Expanded(
-              child: Center(child: ChatHistoryList()),
+              child: Center(
+                  child: Row(children: [
+                Spacer(
+                  flex: 1,
+                ),
+                Container(
+                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                  child: ChatHistoryList(),
+                ),
+                Spacer(
+                  flex: 1,
+                )
+              ])),
               flex: 25,
             ),
             Spacer(
@@ -91,7 +123,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton.icon(
                 label: Text("Find a new perspective"),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.green.shade300,
+                  primary: Colors.greenAccent.shade700,
                 ),
                 icon: Padding(
                   padding: const EdgeInsets.all(8.0),

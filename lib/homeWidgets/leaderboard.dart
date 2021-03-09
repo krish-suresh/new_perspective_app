@@ -1,3 +1,4 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
@@ -7,6 +8,7 @@ class UserLeaderboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Insight Score Leaderboard"),

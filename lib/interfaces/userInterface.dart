@@ -4,6 +4,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
 import '../enums.dart';
 import 'chatInterface.dart';
 
@@ -18,6 +19,7 @@ class User {
   bool registered;
   Map<String, dynamic> userDemographicData;
 
+
   bool isVerified;
   int insightScore = 0;
   User(this.userProfile,
@@ -31,6 +33,10 @@ class User {
       this.isVerified,
       this.userDemographicData,
       this.insightScore});
+
+  
+  
+
   factory User.fromJson(Map<String, dynamic> userData) {
     User user = User(
       userData,
@@ -138,6 +144,32 @@ class User {
         .then((value) => value.docs.map((e) => Chat.fromSnapshot(e)).toList());
   }
 
+  Widget profileImage(){
+    return photoURL != null
+        ? ClipOval(
+            child: Image.network(
+              photoURL,
+              width: 25,
+              height: 25,
+              fit: BoxFit.cover,
+            ),
+          )
+        : Container();
+  }
+
+  Widget profileImageLarge(){
+    return photoURL != null
+        ? ClipOval(
+            child: Image.network(
+              photoURL,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          )
+        : Container();
+  }
+
   static Future<List<User>> getLeaderboard() async {
     return await FirebaseFirestore.instance
         .collection("users")
@@ -147,6 +179,8 @@ class User {
       return value.docs.map((e) => User.fromJson(e.data())).toList();
     });
   }
+
+
 }
 
 class DemographicQuestion {
