@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/services/auth.dart';
 
-import '../interfaces.dart';
 import 'package:provider/provider.dart';
 import 'package:auth_buttons/auth_buttons.dart';
 

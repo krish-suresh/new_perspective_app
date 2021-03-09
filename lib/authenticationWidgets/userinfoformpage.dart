@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/enums.dart';
+import 'package:new_perspective_app/interfaces/userInterface.dart';
 import 'package:provider/provider.dart';
 import 'package:intersperse/intersperse.dart';
-import '../interfaces.dart';
 
 class UserInfoFormPage extends StatelessWidget {
   const UserInfoFormPage({Key key}) : super(key: key);

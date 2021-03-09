@@ -3,78 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:new_perspective_app/enums.dart';
-import 'package:new_perspective_app/interfaces.dart';
+import 'package:new_perspective_app/interfaces/chatInterface.dart';
+import 'package:new_perspective_app/interfaces/userInterface.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
+import 'declinePage.dart';
 import 'messages.dart';
-
-class ChatWaitingPage extends StatelessWidget {
-  const ChatWaitingPage({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    User user = context.watch<User>();
-    Widget searchingContent = Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.remove_red_eye_outlined,
-            color: Colors.black,
-            size: 100,
-          ),
-          Text("Searching for chat..."),
-          Container(
-              padding: EdgeInsets.all(15),
-              width: 50,
-              height: 50,
-              child: CircularProgressIndicator()),
-          OutlinedButton(
-            onPressed: () {
-              user.removeFromSearchForChat();
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text("Chat Search Stopped")));
-              Navigator.pop(context);
-            },
-            child: Text("End Search"),
-          ),
-        ],
-      ),
-    );
-    return Scaffold(
-      // appBar: AppBar(),
-      body: StreamBuilder<String>(
-          stream: user.findChat(),
-          builder: (context, snapshot) {
-            print("Chat Data" + snapshot.toString());
-            if (snapshot.hasError) {
-            } else if (snapshot.hasData && snapshot.data != null) {
-              String chatID = snapshot.data;
-              print("ChatID: " + snapshot.data);
-              user.removeFromSearchForChat();
-              return FutureBuilder<List<User>>(
-                  future: User.getUsersFromChat(chatID),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<User>> snapshot) {
-                    if (snapshot.hasData) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) =>
-                          Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                  child:
-                                      ChatWidget(chatID, users: snapshot.data),
-                                  type: PageTransitionType.fade)));
-                    }
-                    return searchingContent;
-                  });
-            }
-            return searchingContent;
-          }),
-    );
-  }
-}
 
 class ChatWidget extends StatelessWidget {
   final String chatid;
@@ -468,81 +403,6 @@ class UserTypingWidget extends StatelessWidget {
   }
 }
 
-class ChatHistoryList extends StatelessWidget {
-  const ChatHistoryList({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    User user = context.watch<User>();
-    return Container(
-      child: FutureBuilder<List<Chat>>(
-        future: user.getChatHistory(user.uid),
-        builder: (BuildContext context, AsyncSnapshot<List<Chat>> snapshot) {
-          if (snapshot.hasError) {
-            return Text("Something went wrong while fetching chat history. :(");
-          } else if (snapshot.hasData) {
-            if (snapshot.data.length == 0) {
-              return Text("You have no chats.");
-            } else {
-              snapshot.data.sort((a, b) => b.chatData['completedAt']
-                  .compareTo(a.chatData['completedAt']));
-              return ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      trailing: snapshot.data[index].chatData['userScores'] !=
-                              null
-                          ? Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Text(snapshot.data[index]
-                                    .chatData['userScores'][user.uid]
-                                    .toString()),
-                                CircularProgressIndicator(
-                                  valueColor: new AlwaysStoppedAnimation<Color>(
-                                      snapshot.data[index]
-                                                      .chatData['userScores']
-                                                  [user.uid] >
-                                              7
-                                          ? Colors.green
-                                          : (snapshot.data[index].chatData[
-                                                      'userScores'][user.uid] >
-                                                  4
-                                              ? Colors.orange
-                                              : Colors.red)),
-                                  value: snapshot.data[index]
-                                          .chatData['userScores'][user.uid] /
-                                      10,
-                                ),
-                              ],
-                            )
-                          : Text("N/A"),
-                      title: Text(DateFormat('MM/dd/yyyy').add_jm().format(
-                          snapshot.data[index].chatData['completedAt']
-                              .toDate())),
-                    );
-                    // return ChatCard(snapshot.data[index]);
-                  });
-            }
-          }
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Loading Chat History..."),
-              SizedBox(
-                height: 50,
-              ),
-              CircularProgressIndicator()
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
 class ChatCard extends StatelessWidget {
   final Chat chat;
   const ChatCard(this.chat, {Key key}) : super(key: key);
@@ -615,26 +475,5 @@ class InsightScorePage extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class DeclinedPage extends StatelessWidget {
-  final String userName;
-  const DeclinedPage({Key key, this.userName}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text("$userName has declined your chat."),
-          ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text("Return to Home Screen"))
-        ],
-      ),
-    ));
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:new_perspective_app/interfaces.dart';
+import 'package:new_perspective_app/interfaces/chatInterface.dart';
+import 'package:new_perspective_app/interfaces/messageInterface.dart';
+import 'package:new_perspective_app/interfaces/userInterface.dart';
 import 'package:provider/provider.dart';
 
 import 'chat.dart';
