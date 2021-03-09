@@ -85,6 +85,8 @@ class ChatWidget extends StatelessWidget {
   bool hasMessage = false;
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
     TextEditingController messagingFieldController = TextEditingController();
     User user = context.watch<User>();
     return StreamBuilder<DocumentSnapshot>(
@@ -215,7 +217,58 @@ class ChatWidget extends StatelessWidget {
                 ),
               );
             case ChatState.LIVE:
-              // TODO: Handle this case.
+              if (chat.emotionEvent != null && chat.isEmotionEventActive()) {
+                WidgetsBinding.instance.addPostFrameCallback((_) =>
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: Scaffold(
+                          body: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "We detected the discussion to be getting heated, please take a quick break.",
+                                    style:
+                                        Theme.of(context).textTheme.headline1,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                      "“There are things known and there are things unknown, and in between are the doors of perception.” ― Aldous Huxley"),
+                                  CountdownTimer(
+                                    endTime: chat.getEmotionEventEndTime(),
+                                    widgetBuilder:
+                                        (_, CurrentRemainingTime time) {
+                                      if (time == null) {
+                                        return Container();
+                                      }
+                                      return Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Text((time.sec ?? 0).toString()),
+                                          CircularProgressIndicator(
+                                            value: time.sec /
+                                                chat.emotionEvent[
+                                                    'coolDownTimeSec'],
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                    onEnd: () => Navigator.of(context).pop(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ));
+              }
               break;
             case ChatState.COMPLETED:
               // ScaffoldMessenger.of(context).showSnackBar(
@@ -249,6 +302,7 @@ class ChatWidget extends StatelessWidget {
               break;
           }
           return Scaffold(
+            key: _scaffoldKey,
             appBar: AppBar(
               leading: Container(),
               actions: [
