@@ -1,6 +1,8 @@
 import 'package:new_perspective_app/chatsWidgets/chatHistory.dart';
 import 'package:new_perspective_app/chatsWidgets/chatWaiting.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
+import 'package:new_perspective_app/voiceChatWidgets/callSettings.dart';
+import 'package:new_perspective_app/voiceChatWidgets/voiceChatTestingPage.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
@@ -9,7 +11,7 @@ import 'package:new_perspective_app/authenticationWidgets/userinfoformpage.dart'
 import 'package:new_perspective_app/chatsWidgets/chat.dart';
 import 'package:new_perspective_app/services/auth.dart';
 import 'package:page_transition/page_transition.dart';
-
+import 'dart:developer';
 import 'leaderboard.dart';
 
 class HomePage extends StatelessWidget {
@@ -34,7 +36,8 @@ class HomePage extends StatelessWidget {
     if (!userVerified) {
       return UserEmailNotVerifiedPage();
     }
-
+    // Token = user.uid;
+    return VoiceChatTestingPage();
     return Scaffold(
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
