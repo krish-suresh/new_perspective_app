@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:auth_buttons/auth_buttons.dart';
 
 class SignInRegisterPageView extends StatelessWidget {
-  const SignInRegisterPageView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
