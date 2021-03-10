@@ -75,20 +75,7 @@ class MessageWidget extends StatelessWidget {
       default:
     }
     double cWidth = MediaQuery.of(context).size.width * 0.9;
-    Widget profilePhoto = user.photoURL != null
-        ? Container(
-            margin: EdgeInsets.all(3),
-            width: 25,
-            height: 25,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: NetworkImage(user.photoURL),
-              ),
-            ),
-          )
-        : Container();
+    
     return Container(
       // padding: EdgeInsets.all(16.0),
       width: cWidth,
@@ -111,14 +98,14 @@ class MessageWidget extends StatelessWidget {
                       flex: 1,
                     ),
                     contentWidget,
-                    profilePhoto,
+                    user.profileImage()
                   ],
                 )
               : Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    profilePhoto,
+                    user.profileImage(),
                     contentWidget,
                     Spacer(
                       flex: 1,

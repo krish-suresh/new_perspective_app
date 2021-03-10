@@ -1,9 +1,7 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 
 import '../enums.dart';
 import 'chatInterface.dart';
@@ -19,7 +17,6 @@ class User {
   bool registered;
   Map<String, dynamic> userDemographicData;
 
-
   bool isVerified;
   int insightScore = 0;
   User(this.userProfile,
@@ -33,9 +30,6 @@ class User {
       this.isVerified,
       this.userDemographicData,
       this.insightScore});
-
-  
-  
 
   factory User.fromJson(Map<String, dynamic> userData) {
     User user = User(
@@ -144,26 +138,23 @@ class User {
         .then((value) => value.docs.map((e) => Chat.fromSnapshot(e)).toList());
   }
 
-  Widget profileImage(){
-    return photoURL != null
-        ? ClipOval(
-            child: Image.network(
-              photoURL,
-              width: 25,
-              height: 25,
-              fit: BoxFit.cover,
-            ),
-          )
-        : Container();
+  Widget profileImage() {
+    return profileImageCustom(25);
   }
 
-  Widget profileImageLarge(){
+  Widget profileImageLarge() {
+    return profileImageCustom(100);
+  }
+
+  Widget profileImageCustom(size) {
+    print("Photo ");
+    print(photoURL);
     return photoURL != null
         ? ClipOval(
             child: Image.network(
               photoURL,
-              width: 100,
-              height: 100,
+              width: size,
+              height: size,
               fit: BoxFit.cover,
             ),
           )
@@ -179,8 +170,6 @@ class User {
       return value.docs.map((e) => User.fromJson(e.data())).toList();
     });
   }
-
-
 }
 
 class DemographicQuestion {

@@ -44,16 +44,6 @@ class ChatWidget extends StatelessWidget {
           switch (chat.chatState) {
             case ChatState.CREATED:
               User toUser = users.firstWhere((a) => a.uid != user.uid);
-              Widget profilePhoto = toUser.photoURL != null
-                  ? ClipOval(
-                      child: Image.network(
-                        toUser.photoURL,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : Container();
 
               Widget userStatus = Container();
               switch (chat.usersStatus[toUser.uid]) {
@@ -95,7 +85,7 @@ class ChatWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Text("You have been matched with:"),
                       ),
-                      profilePhoto,
+                      toUser.profileImageLarge(),
                       Expanded(
                         child: Text(
                           toUser.displayName,
