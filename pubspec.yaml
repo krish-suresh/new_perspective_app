@@ -51,6 +51,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -87,3 +88,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Antonio
+      fonts:
+      - asset: fonts/Antonio-Regular.ttf
+

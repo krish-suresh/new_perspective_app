@@ -15,12 +15,23 @@ void main() async {
 class MyApp extends StatelessWidget {
   final ThemeData appTheme = ThemeData(
     primarySwatch: Colors.green,
-    backgroundColor: Colors.white,
-    fontFamily: 'Roboto',
+
+    //New Colors
+    primaryColorDark: Color(0xFF79ADAD),
+    primaryColorLight: Color(0xFFC1EDD3),
+    primaryColor: Color(0xFF79AD97),
+    buttonColor: Color(0xFF41276B),
+    backgroundColor: Color(0xFFE4DEF1),
+    accentColor: Color(0xFF317A79),
+
+
+    fontFamily: 'Antonio',
     textTheme: TextTheme(
-      headline1: TextStyle(fontSize: 25, color: Colors.black),
-      headline6: TextStyle(
-          fontSize: 40, color: Colors.black, fontWeight: FontWeight.w200),
+ 
+      headline1: TextStyle(fontSize: 36, color: Colors.black, fontWeight: FontWeight.w400, letterSpacing: -1),
+      headline2: TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.w400),
+
+      headline6: TextStyle(fontSize: 40, color: Colors.black, fontWeight: FontWeight.w200),
       bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,

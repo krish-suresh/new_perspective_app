@@ -36,7 +36,137 @@ class HomePage extends StatelessWidget {
     }
 
     return Scaffold(
-      body: Container(
+      body: new Stack(
+        children:[ 
+          Column(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          color: Theme.of(context).primaryColorLight,
+                          child: Center(
+                            child: Text("History", style: Theme.of(context).textTheme.headline1),
+                          )
+                        ),
+                      ),
+                      flex: 1,
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeft,
+                              child: Profile(),
+                            ));
+                        },
+                        child: Container(
+                          color: Theme.of(context).primaryColor,
+                          child: Center(
+                            child: Text("Profile", style: Theme.of(context).textTheme.headline1),
+                          )
+                        ),
+                      ),
+                      flex: 1,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child:GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.bottomToTop,
+                                child: UserLeaderboard(),
+                              ),
+                            );
+                          },
+                        child: Container(
+                          color: Theme.of(context).primaryColorDark,
+                          child: Center(
+                            child: Text("Leader Board", style: Theme.of(context).textTheme.headline1, textAlign: TextAlign.center,),
+                          )
+                        ),
+                      ),
+                      flex: 1,
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          color: Theme.of(context).backgroundColor,
+                          child: Column(
+                            
+                            children: [
+                              Spacer(
+                                flex: 3
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(20.0),
+                                  ),primary: Theme.of(context).accentColor 
+                                ),
+                                onPressed: () {  },
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
+                                  child: Column(mainAxisSize: MainAxisSize.min,children: [
+                                    Icon(Icons.explore_outlined, size: 50, ) ,
+                                    Text("Explore", style: Theme.of(context).textTheme.headline2), 
+                                  ],),
+                                )
+                                
+                              ),
+                              Spacer(
+                                flex: 2
+                              ),
+                            ]
+                          )
+                        ),
+                      ),
+                      flex: 1,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Center(child: 
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
+               borderRadius: new BorderRadius.circular(12.0),
+               ),primary: Theme.of(context).buttonColor 
+              ),
+              onPressed: (){
+                user.addToSearchForChat();
+                return Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.fade,
+                    child: ChatWaitingPage(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(50, 31, 50, 31), 
+                child: Text("Gain Some Insight", style: Theme.of(context).textTheme.headline2),
+              )
+            ,)
+          ,)
+          
+        ],
+      ) ,
+      
+      /*Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -174,7 +304,7 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ),*/
     );
   }
 }
