@@ -1,5 +1,6 @@
 import 'package:new_perspective_app/chatsWidgets/chatHistory.dart';
 import 'package:new_perspective_app/chatsWidgets/chatWaiting.dart';
+import 'package:new_perspective_app/homeWidgets/history.dart';
 import 'package:new_perspective_app/homeWidgets/profile.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +46,14 @@ class HomePage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.leftToRight,
+                              child: HistoryPage(),
+                            ));
+                        },
                         child: Container(
                           color: Theme.of(context).primaryColorLight,
                           child: Center(
@@ -62,7 +70,7 @@ class HomePage extends StatelessWidget {
                             context,
                             PageTransition(
                               type: PageTransitionType.rightToLeft,
-                              child: Profile(),
+                              child: ProfilePage(),
                             ));
                         },
                         child: Container(

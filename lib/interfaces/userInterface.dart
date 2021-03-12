@@ -158,7 +158,10 @@ class User {
               fit: BoxFit.cover,
             ),
           )
-        : Container();
+        : SizedBox(
+          width: size,
+          height: size,
+        );
   }
 
   static Future<List<User>> getLeaderboard() async {

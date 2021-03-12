@@ -1,11 +1,12 @@
 
-import 'package:new_perspective_app/authenticationWidgets/demographicQuestion.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:new_perspective_app/chatsWidgets/chatHistory.dart';
 import 'package:new_perspective_app/services/auth.dart';
 
 
-class ProfilePage extends StatelessWidget {
+class HistoryPage extends StatelessWidget {
   final AuthService _authService = new AuthService();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -13,16 +14,20 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("On Profile Page");
+    print("On History Page");
 
 
     return Scaffold(
         body: new Stack(
           children: [
-            Expanded(
-              child: (
-                DemographicWidget()
-              ),
+            Column(
+              children: [
+                Expanded(
+                  child: (
+                    ChatHistoryList()
+                  ),
+                ),
+              ],
             ),
             Row(
               children: [

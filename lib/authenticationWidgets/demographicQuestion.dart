@@ -22,9 +22,7 @@ class DemographicWidget extends StatelessWidget{
     bool showError = false;
     AuthService _authService = new AuthService();
 
-    return Container(
-        child: Scaffold(
-          body: Center(
+    return Center(
             child: SingleChildScrollView(
               child: FutureBuilder<List<DemographicQuestion>>(
                   future: DemographicQuestion.getAllQuestions(),
@@ -58,11 +56,11 @@ class DemographicWidget extends StatelessWidget{
                               // Spacer(
                               //   flex: 15,
                               // ),
-                              Text(
-                                "Demographic form to better match you to a new perspective",
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.w400),
-                              ),
+                              // Text(
+                              //   "Demographic form to better match you to a new perspective",
+                              //   style: TextStyle(
+                              //       fontSize: 15, fontWeight: FontWeight.w400),
+                              // ),
                               // Spacer(
                               //   flex: 2,
                               // ),
@@ -70,6 +68,11 @@ class DemographicWidget extends StatelessWidget{
                               // Spacer(
                               //   flex: 5,
                               // ),
+                              Text(
+                                user.displayName,
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+
                               Visibility(
                                 child: Text(
                                   "Please fill out all the fields",
@@ -178,8 +181,7 @@ class DemographicWidget extends StatelessWidget{
                     );
                   }),
             ),
-          ),
-        ));
+          );
   }
 
 }
