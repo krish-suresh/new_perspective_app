@@ -26,37 +26,49 @@ class ChatHistoryList extends StatelessWidget {
               return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      trailing: snapshot.data[index].chatData['userScores'] !=
-                              null
-                          ? Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Text(snapshot.data[index]
-                                    .chatData['userScores'][user.uid]
-                                    .toString()),
-                                CircularProgressIndicator(
-                                  valueColor: new AlwaysStoppedAnimation<Color>(
-                                      snapshot.data[index]
-                                                      .chatData['userScores']
-                                                  [user.uid] >
-                                              7
-                                          ? Colors.green
-                                          : (snapshot.data[index].chatData[
-                                                      'userScores'][user.uid] >
-                                                  4
-                                              ? Colors.orange
-                                              : Colors.red)),
-                                  value: snapshot.data[index]
-                                          .chatData['userScores'][user.uid] /
-                                      10,
-                                ),
-                              ],
-                            )
-                          : Text("N/A"),
-                      title: Text(DateFormat('MM/dd/yyyy').add_jm().format(
-                          snapshot.data[index].chatData['completedAt']
-                              .toDate())),
+                    print(snapshot.data[index].chatData);
+                    print(snapshot.data[index].chatID);
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(21, 22, 60, 0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: Theme.of(context).accentColor,
+                        ),
+                        child: ListTile(
+                          trailing: snapshot.data[index].chatData['userScores'] !=
+                                  null && snapshot.data[index].chatData['userScores'][user.uid] !=
+                                  null
+                              ? Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Text(snapshot.data[index]
+                                        .chatData['userScores'][user.uid]
+                                        .toString()),
+                                    CircularProgressIndicator(
+                                      valueColor: new AlwaysStoppedAnimation<Color>(
+                                          snapshot.data[index]
+                                                          .chatData['userScores']
+                                                      [user.uid] >
+                                                  7
+                                              ? Colors.green
+                                              : (snapshot.data[index].chatData[
+                                                          'userScores'][user.uid] >
+                                                      4
+                                                  ? Colors.orange
+                                                  : Colors.red)),
+                                      value: snapshot.data[index]
+                                              .chatData['userScores'][user.uid] /
+                                          10,
+                                    ),
+                                  ],
+                                )
+                              : Text("N/A"),
+                          title: Text(DateFormat('MM/dd/yyyy').add_jm().format(
+                              snapshot.data[index].chatData['completedAt']
+                                  .toDate())),
+                        ),
+                      ),
                     );
                     // return ChatCard(snapshot.data[index]);
                   });

@@ -63,8 +63,19 @@ class MessageWidget extends StatelessWidget {
             margin: EdgeInsets.all(1),
             padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
             decoration: BoxDecoration(
-              color: sentByMe ? Colors.grey.shade300 : Colors.grey.shade400,
+              color: sentByMe ? new Color(0xFFE4DEF1) : new Color(0xFF79ADAD),
               borderRadius: BorderRadius.all(Radius.circular(5)),
+              boxShadow: [
+                BoxShadow(
+                  color: (sentByMe) ? new Color(0xFF79ADAD): new Color(0xFFE4DEF1) ,
+                  spreadRadius: -1,
+                  blurRadius: 0,
+                  offset: const Offset( 
+                        0.0, 
+                        5.0, 
+                      ), 
+                ) 
+              ]
             ),
             child: Text(
               message.content,

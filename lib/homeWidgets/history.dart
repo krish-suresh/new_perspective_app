@@ -20,14 +20,19 @@ class HistoryPage extends StatelessWidget {
     return Scaffold(
         body: new Stack(
           children: [
-            Column(
-              children: [
-                Expanded(
-                  child: (
-                    ChatHistoryList()
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColorLight,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: (
+                      ChatHistoryList()
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Row(
               children: [

@@ -1,4 +1,4 @@
-import 'package:new_perspective_app/chatsWidgets/chatHistory.dart';
+
 import 'package:new_perspective_app/chatsWidgets/chatWaiting.dart';
 import 'package:new_perspective_app/homeWidgets/history.dart';
 import 'package:new_perspective_app/homeWidgets/profile.dart';

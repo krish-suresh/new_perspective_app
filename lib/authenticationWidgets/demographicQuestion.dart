@@ -106,6 +106,9 @@ class DemographicWidget extends StatelessWidget{
                                     flex: 8
                                   ),
                                   ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Theme.of(context).buttonColor,
+                                    ),
                                     child: Text("Save"),
                                     onPressed: () {
                                       //   user.photoURL = photoURLCheckbox
@@ -138,6 +141,9 @@ class DemographicWidget extends StatelessWidget{
                                   ),
 
                                   ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Theme.of(context).buttonColor,
+                                    ),
                                     onPressed: (){
                                       if(!Navigator.canPop(context)){
                                         (new AuthService()).signOut();

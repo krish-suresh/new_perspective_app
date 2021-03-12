@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
   final ThemeData appTheme = ThemeData(
     //primarySwatch: Colors.green,
     
-
     //New Colors
     primaryColorDark: Color(0xFF79ADAD),
     primaryColorLight: Color(0xFFC1EDD3),
@@ -24,7 +23,6 @@ class MyApp extends StatelessWidget {
     buttonColor: Color(0xFF41276B),
     backgroundColor: Color(0xFFE4DEF1),
     accentColor: Color(0xFF317A79),
-
 
     fontFamily: 'Antonio',
     textTheme: TextTheme(
