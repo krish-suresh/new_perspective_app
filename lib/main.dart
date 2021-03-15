@@ -14,25 +14,30 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final ThemeData appTheme = ThemeData(
-    //primarySwatch: Colors.green,
-    
+
     //New Colors
-    primaryColorDark: Color(0xFF79ADAD),
+    primaryColor: Color(0xFF317A79),
+    accentColor: Color(0xFF41276B),
+    primaryColorLight: Color(0xFF79ADAD),
+
+
+  /*  primaryColorDark: Color(0xFF79ADAD),
     primaryColorLight: Color(0xFFC1EDD3),
     primaryColor: Color(0xFF79AD97),
     buttonColor: Color(0xFF41276B),
     backgroundColor: Color(0xFFE4DEF1),
-    accentColor: Color(0xFF317A79),
+    accentColor: Color(0xFF317A79),*/
 
-    fontFamily: 'Antonio',
+    fontFamily: 'Roboto',
     textTheme: TextTheme(
  
-      headline1: TextStyle(fontSize: 36, color: Colors.black, fontWeight: FontWeight.w400, letterSpacing: -1),
-      headline2: TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.w400, letterSpacing: -1),
-      headline3: TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.w400, letterSpacing: -1),
-      headline4: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w400, letterSpacing: -1),
+      headline1: TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.w600),
+      headline2: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.w600),
+      headline3: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600),
+      headline4: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600, shadows: [Shadow(offset: new Offset(0, 4), blurRadius: 4, color: Color.fromARGB(100, 0, 0, 0))]),
+      headline5: TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.w500, shadows: [Shadow(offset: new Offset(0, 4), blurRadius: 4, color: Color.fromARGB(100, 0, 0, 0))]),
 
-      headline6: TextStyle(fontSize: 40, color: Colors.black, fontWeight: FontWeight.w200),
+      bodyText1:  TextStyle(fontSize: 15, color: Colors.white, fontWeight: FontWeight.w100),
       bodyText2: TextStyle(fontSize: 10.0, fontFamily: 'Hind'),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/authenticationWidgets/registeration.dart';
-import 'package:new_perspective_app/homeWidgets/home.dart';
+import 'package:new_perspective_app/homeWidgets/homePage/home.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
 import 'package:new_perspective_app/services/auth.dart';
 
@@ -12,6 +12,8 @@ class SignInRegisterPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User user = context.watch<User>();
+
+
     return Container(
       height: 100,
       child: user == null
