@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:new_perspective_app/homeWidgets/homePage/homeSummaryWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:new_perspective_app/interfaces/chatInterface.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
@@ -24,49 +25,52 @@ class ChatHistoryList extends StatelessWidget {
               snapshot.data.sort((a, b) => b.chatData['completedAt']
                   .compareTo(a.chatData['completedAt']));
               return ListView.builder(
-                  itemCount: snapshot.data.length,
+                  itemCount: snapshot.data.length + 1,
                   itemBuilder: (context, index) {
+                    if(index >= snapshot.data.length){
+                      print("working");
+                      return SizedBox(height: 100,);
+                    }
+
+                    
                     print(snapshot.data[index].chatData);
                     print(snapshot.data[index].chatID);
+
+                    double insightScore = 0;
+                    bool hasScore = snapshot.data[index].chatData['userScores'] != null && snapshot.data[index].chatData['userScores'][user.uid] != null;
+                    if(hasScore){
+                      insightScore = snapshot.data[index].chatData['userScores'][user.uid];
+                    }
+
                     return Padding(
-                      padding: const EdgeInsets.fromLTRB(21, 22, 60, 0),
+                      padding: const EdgeInsets.fromLTRB(21, 22, 22, 0),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).primaryColor,
                         ),
                         child: ListTile(
-                          trailing: snapshot.data[index].chatData['userScores'] !=
-                                  null && snapshot.data[index].chatData['userScores'][user.uid] !=
-                                  null
-                              ? Stack(
+                          trailing: hasScore ? Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    Text(snapshot.data[index]
-                                        .chatData['userScores'][user.uid]
-                                        .toString()),
-                                    CircularProgressIndicator(
-                                      valueColor: new AlwaysStoppedAnimation<Color>(
-                                          snapshot.data[index]
-                                                          .chatData['userScores']
-                                                      [user.uid] >
-                                                  7
-                                              ? Colors.green
-                                              : (snapshot.data[index].chatData[
-                                                          'userScores'][user.uid] >
-                                                      4
-                                                  ? Colors.orange
-                                                  : Colors.red)),
-                                      value: snapshot.data[index]
-                                              .chatData['userScores'][user.uid] /
-                                          10,
+                                    Text(
+                                      insightScore.toString(),
+                                      style: TextStyle(color: HomeSummaryWidget.ratingColor(insightScore), fontSize: 15, fontWeight: FontWeight.w400)
+                                    ),
+                                    SizedBox(
+                                      width: 34,
+                                      height: 34,
+                                      child: CircularProgressIndicator(
+                                        valueColor: new AlwaysStoppedAnimation<Color>(HomeSummaryWidget.ratingColor(insightScore)),
+                                        value: insightScore / 10,
+                                      ),
                                     ),
                                   ],
                                 )
-                              : Text("N/A"),
-                          title: Text(DateFormat('MM/dd/yyyy').add_jm().format(
+                              : Text("N/A", style: Theme.of(context).textTheme.bodyText1),
+                          title: Text(DateFormat('E, MMM d yyyy').add_jm().format(
                               snapshot.data[index].chatData['completedAt']
-                                  .toDate())),
+                                  .toDate()), style: Theme.of(context).textTheme.bodyText1),
                         ),
                       ),
                     );

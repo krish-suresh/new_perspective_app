@@ -15,6 +15,8 @@ import 'package:new_perspective_app/authenticationWidgets/userinfoformpage.dart'
 import 'package:new_perspective_app/services/auth.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../bottomBar.dart';
+
 
 class HomePage extends StatelessWidget {
   const HomePage({Key key}) : super(key: key);
@@ -223,36 +225,7 @@ class HomePage extends StatelessWidget {
               bottom: 0,
               left: 0,
               right: 0,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Icon(Icons.home, color: Theme.of(context).primaryColorLight, size: 30),
-                    Icon(Icons.leaderboard, color: Theme.of(context).accentColor, size: 30),
-                    ElevatedButton(onPressed: () {}, child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor,
-                        boxShadow: [
-                          BoxShadow(
-                            
-                            offset: new Offset(0, 4),
-                            blurRadius: 2,
-                            color: Color.fromARGB(64, 0, 0, 0),
-                          )
-                        ],
-                      ),
-                      width: 75,
-                      height: 75,
-                      child: Icon(Icons.remove_red_eye, color: Colors.white, size: 50),
-                    ), style: ElevatedButton.styleFrom(shape: CircleBorder(), primary: Theme.of(context).primaryColor)),
-                    Icon(Icons.history, color: Theme.of(context).accentColor, size: 30),
-                    Icon(Icons.explore_outlined, color: Theme.of(context).accentColor, size: 30),
-                  ],
-                ),
-              )
+              child: BottomBar(index: 0,),
             )
           ],
         ),
