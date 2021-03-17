@@ -60,14 +60,14 @@ class MessageWidget extends StatelessWidget {
           flex: 2,
           fit: FlexFit.loose,
           child: Container(
-            margin: EdgeInsets.all(1),
-            padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+            margin: EdgeInsets.all(0),
+            padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
             decoration: BoxDecoration(
-              color: sentByMe ? new Color(0xFFE4DEF1) : new Color(0xFF79ADAD),
+              color: sentByMe ? new Color(0xFFC4C4C4) : Theme.of(context).primaryColorLight,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               boxShadow: [
                 BoxShadow(
-                  color: (sentByMe) ? new Color(0xFF79ADAD): new Color(0xFFE4DEF1) ,
+                  color: Color.fromARGB(64, 0, 0, 0),
                   spreadRadius: -1,
                   blurRadius: 0,
                   offset: const Offset( 
@@ -94,12 +94,21 @@ class MessageWidget extends StatelessWidget {
         crossAxisAlignment:
             sentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          previousMessage == null || previousMessage.userID != message.userID
-              ? Text(
-                  user.displayName,
-                  style: TextStyle(fontSize: 10),
-                )
-              : Container(),
+          previousMessage == null || previousMessage.userID != message.userID 
+          ? Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Row(
+                  mainAxisAlignment: (sentByMe) ? MainAxisAlignment.end : MainAxisAlignment.start ,
+                  children: [
+                    user.profileImage(),
+                    Text(
+                        user.displayName,
+                        style: TextStyle(fontSize: 10),
+                      ),
+                  ],
+                ),
+              )
+          : Container(),
           sentByMe
               ? Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -109,14 +118,12 @@ class MessageWidget extends StatelessWidget {
                       flex: 1,
                     ),
                     contentWidget,
-                    user.profileImage()
                   ],
                 )
               : Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    user.profileImage(),
                     contentWidget,
                     Spacer(
                       flex: 1,

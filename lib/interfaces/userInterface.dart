@@ -150,14 +150,18 @@ class User {
     print("Photo ");
     print(photoURL);
     return photoURL != null
-        ? ClipOval(
-            child: Image.network(
-              photoURL,
-              width: size,
-              height: size,
-              fit: BoxFit.cover,
+        ? SizedBox(
+          width: size,
+          height: size,
+          child: ClipOval(
+              child: Image.network(
+                photoURL,
+                width: size,
+                height: size,
+                fit: BoxFit.cover,
+              ),
             ),
-          )
+        )
         : SizedBox(
           width: size,
           height: size,

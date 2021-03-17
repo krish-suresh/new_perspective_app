@@ -44,7 +44,7 @@ class ProfilePage extends StatelessWidget {
                   child: ElevatedButton.icon(
                     label: Text("Logout"),
                     style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).buttonColor,
+                      primary: Theme.of(context).accentColor,
                     ),
                     icon: Icon(
                       Icons.logout,

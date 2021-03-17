@@ -2,6 +2,7 @@
 
 
 import 'package:new_perspective_app/authenticationWidgets/signin.dart';
+import 'package:new_perspective_app/generalWidgets/loadingWidget.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -107,7 +108,7 @@ class DemographicWidget extends StatelessWidget{
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      primary: Theme.of(context).buttonColor,
+                                      primary: Theme.of(context).accentColor,
                                     ),
                                     child: Text("Save"),
                                     onPressed: () {
@@ -142,7 +143,7 @@ class DemographicWidget extends StatelessWidget{
 
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      primary: Theme.of(context).buttonColor,
+                                      primary: Theme.of(context).accentColor,
                                     ),
                                     onPressed: (){
                                       if(!Navigator.canPop(context)){
@@ -178,13 +179,7 @@ class DemographicWidget extends StatelessWidget{
                         );
                       });
                     }
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Loading questions..."),
-                        CircularProgressIndicator(),
-                      ],
-                    );
+                    return LoadingWidget(pageName: "Profile",);
                   }),
             ),
           );

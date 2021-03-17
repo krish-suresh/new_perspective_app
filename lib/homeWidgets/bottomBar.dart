@@ -1,5 +1,8 @@
 
 
+import 'package:new_perspective_app/chatsWidgets/chatWaiting.dart';
+import 'package:new_perspective_app/interfaces/userInterface.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/homeWidgets/history.dart';
 import 'package:new_perspective_app/homeWidgets/homePage/home.dart';
@@ -17,6 +20,9 @@ class BottomBar extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    
+    User user = context.watch<User>();
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -45,7 +51,17 @@ class BottomBar extends StatelessWidget{
               );
             }
            },),
-          ElevatedButton(onPressed: () {}, child: Container(
+          ElevatedButton(onPressed: () {
+            user.addToSearchForChat();
+                return Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.fade,
+                    child: ChatWaitingPage(),
+                  ),
+                );
+
+          }, child: Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Theme.of(context).primaryColor,
@@ -73,7 +89,7 @@ class BottomBar extends StatelessWidget{
                 );
             }
            },),
-          Icon(Icons.explore_outlined, color: itemColor(context, index == 3), size: 30),
+            IconButton(icon: Icon(Icons.explore_outlined, color: itemColor(context, index == 3), size: 30), onPressed: () {  },),
         ],
       ),
     );

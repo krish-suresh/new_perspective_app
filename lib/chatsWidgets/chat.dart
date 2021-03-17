@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:new_perspective_app/chatsWidgets/chatPrep.dart';
 import 'package:new_perspective_app/enums.dart';
 import 'package:new_perspective_app/interfaces/chatInterface.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
@@ -43,104 +44,7 @@ class ChatWidget extends StatelessWidget {
           chat = Chat.fromSnapshot(snapshot.data);
           switch (chat.chatState) {
             case ChatState.CREATED:
-              User toUser = users.firstWhere((a) => a.uid != user.uid);
-
-              Widget userStatus = Container();
-              switch (chat.usersStatus[toUser.uid]) {
-                case ChatUserStatus.ACCEPTED:
-                  userStatus = Text("${toUser.displayName} has accepted.");
-                  break;
-
-                case ChatUserStatus.NORESPONSE:
-                  userStatus = Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text("Waiting for ${toUser.displayName} to response."),
-                      CircularProgressIndicator()
-                    ],
-                  );
-                  break;
-                case ChatUserStatus.DECLINED:
-                case ChatUserStatus.DISCONNECTED:
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(content: Text("Your Chat Has Closed.")));
-                  // WidgetsBinding.instance
-                  //     .addPostFrameCallback((_) => Navigator.pushReplacement(
-                  //           context,
-                  //           PageTransition(
-                  //             type: PageTransitionType.fade,
-                  //             child: ChatWaitingPage(),
-                  //           ),
-                  //         ));
-                  break;
-              }
-              return Scaffold(
-                body: Center(
-                  child: Column(
-                    children: [
-                      Spacer(
-                        flex: 5,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("You have been matched with:"),
-                      ),
-                      toUser.profileImageLarge(),
-                      Expanded(
-                        child: Text(
-                          toUser.displayName,
-                          style: Theme.of(context).textTheme.headline1,
-                        ),
-                      ),
-                      Spacer(
-                        flex: 1,
-                      ),
-                      Text("Add some info here"),
-                      Spacer(
-                        flex: 1,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              chat.userDecline(user.uid);
-                              // WidgetsBinding.instance.addPostFrameCallback(
-                              //     (_) => Navigator.pushReplacement(
-                              //           context,
-                              //           PageTransition(
-                              //             type: PageTransitionType.fade,
-                              //             child: ChatWaitingPage(),
-                              //           ),
-                              //         ));
-                            },
-                            child: Text("Decline"),
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.red,
-                              onPrimary: Colors.white,
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => chat.userAccept(user.uid),
-                            child: Text("Accept"),
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.green,
-                              onPrimary: Colors.white,
-                            ),
-                          )
-                        ],
-                      ),
-                      Spacer(
-                        flex: 1,
-                      ),
-                      userStatus,
-                      Spacer(
-                        flex: 5,
-                      )
-                    ],
-                  ),
-                ),
-              );
+              return ChatPrep(users: users, chat: chat);
             case ChatState.LIVE:
               if (chat.emotionEvent != null && chat.isEmotionEventActive()) {
                 WidgetsBinding.instance.addPostFrameCallback((_) =>
@@ -226,136 +130,127 @@ class ChatWidget extends StatelessWidget {
                           type: PageTransitionType.fade)));
               break;
           }
+
           return Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              leading: Container(),
-              actions: [
-                chat != null && chat.chatState == ChatState.LIVE
-                    ? Center(
-                        child: CountdownTimer(
-                        endTime:
-                            chat.chatData['liveAt'].millisecondsSinceEpoch +
-                                chat.chatData['timeLimit'],
-                        widgetBuilder: (_, CurrentRemainingTime time) {
-                          if (((time.min ?? 0).toDouble() * 60.0 +
-                                  (time.sec ?? 0).toDouble()) <
-                              30.0) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5))),
-                              padding: EdgeInsets.all(4),
-                              child: Text(
-                                  'Time Remaining: min: ${time.min ?? 0} sec: ${time.sec ?? 0}'),
-                            );
-                          }
-                          return Text(
-                              'Time Remaining: min: ${time.min ?? 0} sec: ${time.sec ?? 0}');
-                        },
-                        onEnd: () => chat.completeChat(),
-                      ))
-                    : Container(),
-                Container(
-                  // color: Colors.red,
-                  // padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  margin: EdgeInsets.all(10),
-                  child: IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        chat.completeChat();
-                      }),
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    new Color(0xFF492B78),
+                    new Color(0xFFE4CFE1),
+                  ]
                 )
-              ],
-            ),
-            body: Column(
-              mainAxisSize: MainAxisSize.max,
-              verticalDirection: VerticalDirection.up,
-              children: [
-                StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Spacer(
-                        flex: 1,
-                      ),
-                      Expanded(
-                        flex: 50,
-                        child: TextField(
-                          autofocus: true,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          onChanged: (value) {
-                            chat.currentMessageText =
-                                messagingFieldController.text;
-                            chat.updateUsersTyping(user.uid);
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              setState(() {
-                                hasMessage =
-                                    messagingFieldController.text != "";
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                verticalDirection: VerticalDirection.up,
+                children: [
+                  StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Spacer(
+                          flex: 1,
+                        ),
+                        Expanded(
+                          flex: 50,
+                          child: TextField(
+                            autofocus: true,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            onChanged: (value) {
+                              chat.currentMessageText =
+                                  messagingFieldController.text;
+                              chat.updateUsersTyping(user.uid);
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                setState(() {
+                                  hasMessage =
+                                      messagingFieldController.text != "";
+                                });
                               });
-                            });
-                          },
-                          controller: messagingFieldController,
-                          decoration: InputDecoration(
-                            hintText: "Share some insight...",
+                            },
+                            controller: messagingFieldController,
+                            decoration: InputDecoration(
+                              hintText: "Share some insight...",
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        child: IconButton(
-                          onPressed: hasMessage
-                              ? () {
-                                  chat.sendMessage(
-                                      content: messagingFieldController.text,
-                                      contentType: 'text',
-                                      userID: user.uid);
-                                  messagingFieldController.clear();
-                                  chat.currentMessageText =
-                                      messagingFieldController.text;
-                                  chat.updateUsersTyping(user.uid);
-                                }
-                              : null,
-                          icon: Icon(Icons.arrow_upward),
+                        Container(
+                          child: IconButton(
+                            onPressed: hasMessage
+                                ? () {
+                                    chat.sendMessage(
+                                        content: messagingFieldController.text,
+                                        contentType: 'text',
+                                        userID: user.uid);
+                                    messagingFieldController.clear();
+                                    chat.currentMessageText =
+                                        messagingFieldController.text;
+                                    chat.updateUsersTyping(user.uid);
+                                  }
+                                : null,
+                            icon: Icon(Icons.arrow_upward),
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                }),
-                Expanded(child: MessageList(chat, users)),
-                Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          child: Text(
-                            "${chat.question['text']}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline1
-                                .copyWith(
-                                    fontSize: 20, fontWeight: FontWeight.w400),
-                            textAlign: TextAlign.center,
-                          )),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        child: ElevatedButton(
-                            child: Text("New Question"),
-                            onPressed: () => chat.newQuestion()),
-                      )
-                    ],
+                      ],
+                    );
+                  }),
+                  Expanded(child: MessageList(chat, users)),
+                  GestureDetector(
+                    onTap: () => chat.newQuestion(),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(11, 42, 11, 0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          color: Theme.of(context).primaryColor,
+                          boxShadow: [
+                            BoxShadow(
+                              offset: new Offset(0, 4),
+                              blurRadius: 2,
+                              color: Color.fromARGB(64, 0, 0, 0),
+                            )
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                "${chat.question['text']}",
+                                style: Theme.of(context).textTheme.headline2,
+                                textAlign: TextAlign.center,
+                              ),
+                              Center(
+                                child: CountdownTimer(
+                                endTime: chat.chatData['liveAt'].millisecondsSinceEpoch + chat.chatData['timeLimit'],
+                                widgetBuilder: (_, CurrentRemainingTime time) {
+                                  if (((time.min ?? 0).toDouble() * 60.0 + (time.sec ?? 0).toDouble()) < 30.0) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius:
+                                              BorderRadius.all(Radius.circular(5))),
+                                      padding: EdgeInsets.all(4),
+                                      child: Text('${time.min ?? 0}:${(time.sec < 10) ? 0 : ""}${time.sec ?? 0}', style: Theme.of(context).textTheme.headline3),
+                                    );
+                                  }
+                                  return Text('${time.min ?? 0}:${(time.sec < 10) ? 0 : ""}${time.sec ?? 0}', style: Theme.of(context).textTheme.headline3);
+                                },
+                                onEnd: () => chat.completeChat(),
+                              ))
+
+                            ],
+                          ),
+                        )),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });

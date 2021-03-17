@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:new_perspective_app/generalWidgets/loadingWidget.dart';
 import 'package:new_perspective_app/homeWidgets/homePage/homeSummaryWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:new_perspective_app/interfaces/chatInterface.dart';
@@ -79,17 +80,7 @@ class ChatHistoryList extends StatelessWidget {
             }
           }
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Loading Chat History..."),
-              SizedBox(
-                height: 50,
-              ),
-              CircularProgressIndicator()
-            ],
-          );
+          return LoadingWidget(pageName: "History",);
         },
       ),
     );
