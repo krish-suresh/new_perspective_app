@@ -10,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import 'declinePage.dart';
+import 'insightScore.dart';
 import 'messages.dart';
 
 class ChatWidget extends StatelessWidget {
@@ -225,7 +226,8 @@ class ChatWidget extends StatelessWidget {
                                 style: Theme.of(context).textTheme.headline2,
                                 textAlign: TextAlign.center,
                               ),
-                              Center(
+                              chat != null && chat.chatState == ChatState.LIVE
+                              ? Center(
                                 child: CountdownTimer(
                                 endTime: chat.chatData['liveAt'].millisecondsSinceEpoch + chat.chatData['timeLimit'],
                                 widgetBuilder: (_, CurrentRemainingTime time) {
@@ -242,7 +244,7 @@ class ChatWidget extends StatelessWidget {
                                   return Text('${time.min ?? 0}:${(time.sec < 10) ? 0 : ""}${time.sec ?? 0}', style: Theme.of(context).textTheme.headline3);
                                 },
                                 onEnd: () => chat.completeChat(),
-                              ))
+                              )) : Container(),
 
                             ],
                           ),
@@ -302,62 +304,6 @@ class ChatCard extends StatelessWidget {
           Text(
               "Insight Score: ${chat.chatData['userScores'] != null ? chat.chatData['userScores'][user.uid] ?? 'N/A' : 'N/A'}")
         ],
-      ),
-    );
-  }
-}
-
-class InsightScorePage extends StatelessWidget {
-  final Chat chat;
-  final User scoringUser;
-  const InsightScorePage(
-    this.chat,
-    this.scoringUser, {
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    int _currentSliderValue = 5;
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-                "Rate ${scoringUser.displayName} on how much insight they shared.",
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline6),
-            StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                children: [
-                  Text(
-                    _currentSliderValue.toString(),
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                  Slider(
-                    value: _currentSliderValue.toDouble(),
-                    min: 0,
-                    max: 10,
-                    divisions: 10,
-                    label: _currentSliderValue.round().toString(),
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValue = value.toInt();
-                      });
-                    },
-                  ),
-                  ElevatedButton(
-                      onPressed: () => chat
-                          .scoreUser(scoringUser, _currentSliderValue)
-                          .then((value) => Navigator.pop(context)),
-                      child: Text("Submit"))
-                ],
-              );
-            })
-          ],
-        ),
       ),
     );
   }
