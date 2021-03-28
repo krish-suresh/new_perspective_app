@@ -30,7 +30,7 @@ class UserLeaderboard extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).accentColor,
                   ),
                   child: new Stack(
                     children: [
@@ -44,7 +44,7 @@ class UserLeaderboard extends StatelessWidget {
                               child: Container(
                                 height: star2width * starHeightScale,
                                 width: star2width,
-                                color: Theme.of(context).primaryColorLight,
+                                color: Theme.of(context).primaryColor,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -65,7 +65,7 @@ class UserLeaderboard extends StatelessWidget {
                               child: Container(
                                 height: star1width * starHeightScale,
                                 width: star1width,
-                                color: Theme.of(context).primaryColorLight,
+                                color: Theme.of(context).primaryColor,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -86,7 +86,7 @@ class UserLeaderboard extends StatelessWidget {
                               child: Container(
                                 height: star3width * starHeightScale,
                                 width: star3width,
-                                color: Theme.of(context).primaryColorLight,
+                                color: Theme.of(context).primaryColor,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

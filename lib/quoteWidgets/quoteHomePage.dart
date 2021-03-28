@@ -42,14 +42,41 @@ class QuoteHomePage extends StatelessWidget{
                       
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(40, 11, 40, 0),
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).accentColor,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
-                          tileColor: Theme.of(context).primaryColor,
-                          leading: snapshot.data[index].profileImage(),
-                          title: Text(snapshot.data[index].displayName ?? ""),
-                          trailing: Text("\"${q.quote}\""),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    snapshot.data[index].profileImage(),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(snapshot.data[index].displayName ?? "", style: Theme.of(context).textTheme.headline4),
+                                    )
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text("\"${q.quote}\"", style: Theme.of(context).textTheme.headline2),
+                                ),
+                              ],
+                            ),
+                          ),
+                          /* ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            tileColor: Theme.of(context).primaryColor,
+                            leading: snapshot.data[index].profileImage(),
+                            title: Text(snapshot.data[index].displayName ?? ""),
+                            trailing: Text("\"${q.quote}\""),
+                          ),*/
                         ),
                       );
                     }),

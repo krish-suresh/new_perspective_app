@@ -48,30 +48,33 @@ class ChatHistoryList extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).accentColor,
                         ),
-                        child: ListTile(
-                          trailing: hasScore ? Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Text(
-                                      insightScore.toString(),
-                                      style: TextStyle(color: HomeSummaryWidget.ratingColor(insightScore), fontSize: 15, fontWeight: FontWeight.w400)
-                                    ),
-                                    SizedBox(
-                                      width: 34,
-                                      height: 34,
-                                      child: CircularProgressIndicator(
-                                        valueColor: new AlwaysStoppedAnimation<Color>(HomeSummaryWidget.ratingColor(insightScore)),
-                                        value: insightScore / 10,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            trailing: hasScore ? Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Text(
+                                        insightScore.toString(),
+                                        style: TextStyle(color: HomeSummaryWidget.ratingColor(insightScore), fontSize: 15, fontWeight: FontWeight.w400)
                                       ),
-                                    ),
-                                  ],
-                                )
-                              : Text("N/A", style: Theme.of(context).textTheme.bodyText1),
-                          title: Text(DateFormat('E, MMM d yyyy').add_jm().format(
-                              snapshot.data[index].chatData['completedAt']
-                                  .toDate()), style: Theme.of(context).textTheme.bodyText1),
+                                      SizedBox(
+                                        width: 34,
+                                        height: 34,
+                                        child: CircularProgressIndicator(
+                                          valueColor: new AlwaysStoppedAnimation<Color>(HomeSummaryWidget.ratingColor(insightScore)),
+                                          value: insightScore / 10,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Text("N/A", style: Theme.of(context).textTheme.bodyText1),
+                            title: Text(DateFormat('E, MMM d yyyy').add_jm().format(
+                                snapshot.data[index].chatData['completedAt']
+                                    .toDate()), style: Theme.of(context).textTheme.bodyText1),
+                          ),
                         ),
                       ),
                     );
