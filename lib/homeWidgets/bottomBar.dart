@@ -2,6 +2,7 @@
 
 import 'package:new_perspective_app/chatsWidgets/chatWaiting.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
+import 'package:new_perspective_app/quoteWidgets/quoteHomePage.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/homeWidgets/history.dart';
@@ -89,7 +90,14 @@ class BottomBar extends StatelessWidget{
                 );
             }
            },),
-            IconButton(icon: Icon(Icons.explore_outlined, color: itemColor(context, index == 3), size: 30), onPressed: () {  },),
+            IconButton(icon: Icon(Icons.explore_outlined, color: itemColor(context, index == 3), size: 30), onPressed: () { 
+              Navigator.pushReplacement(
+              context, 
+              PageTransition(
+                 type: PageTransitionType.fade,
+                  child: QuoteHomePage(),
+              ));
+             },),
         ],
       ),
     );

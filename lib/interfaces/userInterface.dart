@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:new_perspective_app/interfaces/quoteInterface.dart';
 
 import '../enums.dart';
 import 'chatInterface.dart';
@@ -16,6 +17,7 @@ class User {
   Timestamp lastSeen;
   bool registered;
   Map<String, dynamic> userDemographicData;
+  List<dynamic> userQuotes;
 
   bool isVerified;
   int insightScore = 0;
@@ -29,7 +31,8 @@ class User {
       this.registered,
       this.isVerified,
       this.userDemographicData,
-      this.insightScore});
+      this.insightScore,
+      this.userQuotes});
 
   factory User.fromJson(Map<String, dynamic> userData) {
     User user = User(
@@ -45,6 +48,7 @@ class User {
       insightScore: userData['insightScore'] ?? 0,
       userDemographicData:
           Map<String, dynamic>.from(userData['userDemographicData'] ?? {}),
+      userQuotes: List<dynamic>.from(userData['userQuotes'] ?? {}),
     );
     user.uid = userData['uid'];
     user.displayName = userData['displayName'];
@@ -68,8 +72,11 @@ class User {
       'registered': registered,
       'isVerified': isVerified,
       'insightScore': insightScore,
-      'userDemographicData': userDemographicData
+      'userDemographicData': userDemographicData,
+      'userQuotes': userQuotes,
     };
+
+    
   }
 
   updateUser() async {
@@ -150,22 +157,35 @@ class User {
     print("Photo ");
     print(photoURL);
     return photoURL != null
-        ? SizedBox(
-          width: size,
-          height: size,
-          child: ClipOval(
-              child: Image.network(
-                photoURL,
-                width: size,
-                height: size,
-                fit: BoxFit.cover,
-              ),
+      ? SizedBox(
+        width: size,
+        height: size,
+        child: ClipOval(
+            child: Image.network(
+              photoURL,
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
             ),
-        )
-        : SizedBox(
-          width: size,
-          height: size,
-        );
+          ),
+      )
+      : SizedBox(
+        width: size,
+        height: size,
+      );
+  }
+
+  ExploreQuote getLatestQuote(){
+    ExploreQuote first;
+    for(int i = 0; i < userQuotes.length; i++){
+      ExploreQuote q = ExploreQuote.fromJson(userQuotes[i]);
+      if(first == null){
+        first = q;
+      }else if(q.time.compareTo(first.time) > 0){
+        first = q;
+      }
+    }
+    return first;
   }
 
   static Future<List<User>> getLeaderboard() async {

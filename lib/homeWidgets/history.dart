@@ -2,7 +2,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/chatsWidgets/chatHistory.dart';
-import 'package:new_perspective_app/services/auth.dart';
 
 import 'homePageBackground.dart';
 

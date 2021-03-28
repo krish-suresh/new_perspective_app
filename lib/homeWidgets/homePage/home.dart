@@ -5,6 +5,7 @@ import 'package:new_perspective_app/homeWidgets/history.dart';
 import 'package:new_perspective_app/homeWidgets/homePage/homeHistoryWidget.dart';
 import 'package:new_perspective_app/homeWidgets/homePage/homeSummaryWidget.dart';
 import 'package:new_perspective_app/homeWidgets/profile.dart';
+import 'package:new_perspective_app/quoteWidgets/quoteHomePage.dart';
 
 import 'package:provider/provider.dart';
 import 'package:new_perspective_app/interfaces/userInterface.dart';
@@ -157,7 +158,12 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 8),
             GestureDetector(
               onTap: () {
-                
+                Navigator.pushReplacement(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.fade,
+                    child: QuoteHomePage(),
+                  ));
               },
               child: Text(
                 "view quotes",
