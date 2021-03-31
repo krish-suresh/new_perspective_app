@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:new_perspective_app/authenticationWidgets/registeration.dart';
-import 'package:new_perspective_app/interfaces.dart';
+import 'package:new_perspective_app/homeWidgets/homePage/home.dart';
+import 'package:new_perspective_app/interfaces/userInterface.dart';
 import 'package:new_perspective_app/services/auth.dart';
 
-import '../main.dart';
 import 'package:provider/provider.dart';
 import 'package:auth_buttons/auth_buttons.dart';
 
 class SignInRegisterPageView extends StatelessWidget {
-  const SignInRegisterPageView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     User user = context.watch<User>();
+
+
     return Container(
       height: 100,
       child: user == null

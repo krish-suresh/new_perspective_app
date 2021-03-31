@@ -42,6 +42,7 @@ dependencies:
   intersperse: ^1.1.1
   flutter_countdown_timer: ^3.0.1
   intl: ^0.16.1
+  icon_shadow: ^1.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -51,6 +52,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -87,3 +89,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Antonio
+      fonts:
+      - asset: fonts/Antonio-Regular.ttf
+

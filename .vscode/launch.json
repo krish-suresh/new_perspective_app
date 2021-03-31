@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations":[
+        {
+            "name": "Flutter: Attach to Device",
+            "type": "dart",
+            "request": "attach"
+        },
+        {
+            "name": "new_perspective_app",
+            "request": "launch",
+            "type": "dart",
+            "args": ["-d", "chrome", "--web-port", "5000"] 
+        }
+    ]
+}
